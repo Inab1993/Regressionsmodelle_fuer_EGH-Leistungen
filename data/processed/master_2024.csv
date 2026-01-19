@@ -1,53 +1,54 @@
-Name,Typ,ROR,erz. Hilfen absolut,erz. Hilfen pro 10000,35a Hilfen absolut,35a Hilfen pro 10000,Überörtlicher Träger,Bevölkerung 6 bis 20,Anteil Kinder a.d. Gesamtbev.,SGB II-Quote,Kinderarztdichte,KJP-Dichte,Bildungsindex
-Bielefeld,Kreisfreie Stadt,Bielefeld,6067,1341,843,186,LWL,45255,13.6,10.03,11.8,1.1,2.848398348898772
-Bochum,Kreisfreie Stadt,Bochum/Hagen,5672,1311,652,151,LWL,43266,12.1,10.91,13.1,1.5,2.822506015176754
-Bonn,Kreisfreie Stadt,Bonn,4626,1059,725,166,LVR,43701,13.5,8.56,14.3,2.0,3.6889745166914905
-Bottrop,Kreisfreie Stadt,Emscher-Lippe,1891,1256,190,126,LWL,15050,12.7,9.03,9.3,1.7,2.1800884955752213
-Dortmund,Kreisfreie Stadt,Dortmund,11512,1415,2118,260,LWL,81355,13.5,14.75,8.8,1.5,2.832054061516992
-Duisburg,Kreisfreie Stadt,Duisburg/Essen,10763,1511,1327,186,LVR,71210,14.2,14.28,10.4,1.4,2.451916160101917
-Düsseldorf,Kreisfreie Stadt,Düsseldorf,11264,1482,523,69,LVR,76018,12.3,8.04,11.0,1.2,3.4898986708032043
-Gelsenkirchen,Kreisfreie Stadt,Emscher-Lippe,3873,969,306,77,LWL,39987,14.9,18.8,9.9,1.7,2.274650357827775
-Hagen,Kreisfreie Stadt,Bochum/Hagen,3060,1128,434,160,LWL,27118,14.2,13.56,9.5,1.5,2.4249255141341477
-Hamm,Kreisfreie Stadt,Dortmund,4390,1738,557,220,LWL,25266,14.0,8.92,10.0,1.5,2.227224634820371
-Herne,Kreisfreie Stadt,Bochum/Hagen,3131,1480,309,146,LWL,21150,13.6,14.3,7.6,1.5,2.3422598479612997
-Krefeld,Kreisfreie Stadt,Düsseldorf,5291,1701,495,159,LVR,31097,13.4,11.23,11.4,1.2,2.6248227170616065
-Köln,Kreisfreie Stadt,Köln,17855,1396,4176,326,LVR,127926,12.5,10.62,12.4,2.2,3.35864811007633
-Leverkusen,Kreisfreie Stadt,Köln,2894,1251,656,284,LVR,23132,13.7,9.53,12.7,2.2,2.91863819965378
-Mönchengladbach,Kreisfreie Stadt,Düsseldorf,4860,1354,375,104,LVR,35894,13.4,12.46,12.7,1.2,2.5309252845126173
-Mülheim an der Ruhr,Kreisfreie Stadt,Duisburg/Essen,2711,1178,659,286,LVR,23013,13.3,11.24,7.5,1.4,2.961709006928406
-Münster,Kreisfreie Stadt,Münster,5035,1329,973,257,LWL,37892,12.3,6.15,18.4,2.2,3.308707635769702
-Oberhausen,Kreisfreie Stadt,Duisburg/Essen,4908,1703,285,99,LVR,28822,13.5,12.29,11.4,1.4,2.2885104219623797
-Remscheid,Kreisfreie Stadt,Düsseldorf,1613,1046,244,158,LVR,15425,13.6,9.56,13.3,1.2,2.4949546666666667
-Solingen,Kreisfreie Stadt,Düsseldorf,2752,1230,477,213,LVR,22381,13.5,9.01,11.2,1.2,2.43827325492592
-Wuppertal,Kreisfreie Stadt,Düsseldorf,6049,1205,822,164,LVR,50179,14.0,12.68,12.8,1.2,2.670879220075826
-Aachen,Städteregion,Aachen,12171,1657,2209,301,LVR,73441,12.6,7.96,11.9,1.6,3.1033307061584754
-Borken,Kreis,Münster,7542,1379,556,102,LWL,54698,14.4,4.53,8.7,2.2,2.1720538657593487
-Coesfeld,Kreis,Münster,2602,834,317,102,LWL,31210,13.7,4.54,11.1,2.2,2.2403702984398266
-Düren,Kreis,Aachen,5053,1359,1121,301,LVR,37189,13.3,7.63,10.3,1.6,2.5144476232394366
-Ennepe-Ruhr-Kreis,Kreis,Bochum/Hagen,6216,1581,1205,306,LWL,39319,12.5,8.5,10.1,1.5,2.451924747802705
-Euskirchen,Kreis,Aachen,2553,937,423,155,LVR,27233,13.4,5.18,7.1,1.6,2.208217281950001
-Gütersloh,Kreis,Bielefeld,6316,1227,628,122,LWL,51494,14.1,5.22,8.9,1.1,2.312879464643925
-Heinsberg,Kreis,Aachen,3729,1045,885,248,LVR,35697,13.5,6.04,7.6,1.6,2.2598108598985407
-Herford,Kreis,Bielefeld,3458,978,331,94,LWL,35368,13.9,6.37,9.5,1.1,2.390205371248025
-Hochsauerlandkreis,Kreis,Arnsberg,4470,1317,446,131,LWL,33946,13.0,4.88,6.5,0.9,2.234437876144012
-Höxter,Kreis,Paderborn,1897,1022,301,162,LWL,18563,13.3,4.85,4.9,0.9,2.210839667823718
-Kleve,Kreis,Duisburg/Essen,5323,1254,1027,242,LVR,42460,13.2,5.41,8.5,1.4,2.190921661979935
-Lippe,Kreis,Bielefeld,4805,964,722,145,LWL,49849,14.4,6.82,7.1,1.1,2.511861224489796
-Mettmann,Kreis,Düsseldorf,8898,1345,1226,185,LVR,66139,13.5,8.03,10.0,1.2,2.712772158409052
-Minden-Lübbecke,Kreis,Bielefeld,4270,935,653,143,LWL,45686,14.3,7.34,7.3,1.1,2.42695592982148
-Märkischer Kreis,Kreis,Bochum/Hagen,7074,1285,627,114,LWL,55051,13.5,7.99,7.6,1.5,2.2854529163716566
-Oberbergischer Kreis,Kreis,Köln,5878,1530,669,174,LVR,38412,14.0,5.52,7.6,2.2,2.5464341309271914
-Olpe,Kreis,Siegen,2450,1368,388,217,LWL,17911,13.5,4.3,6.0,1.7,2.2036161606316096
-Paderborn,Kreis,Paderborn,5217,1172,822,185,LWL,44525,14.1,6.06,9.9,0.9,2.6463403518366606
-Recklinghausen,Kreis,Emscher-Lippe,11703,1415,1292,156,LWL,82722,13.3,10.49,9.0,1.7,2.194240508388188
-Rhein-Erft-Kreis,Kreis,Köln,9121,1377,1509,228,LVR,66261,13.9,6.72,8.4,2.2,2.453008239759817
-Rhein-Kreis Neuss,Kreis,Düsseldorf,7206,1133,996,157,LVR,63589,13.9,6.61,10.7,1.2,2.543826373558036
-Rhein-Sieg-Kreis,Kreis,Bonn,9806,1166,1496,178,LVR,84114,13.9,5.82,11.2,2.0,2.5546657161418658
-Rheinisch-Bergischer Kreis,Kreis,Köln,4614,1208,1012,265,LVR,38195,13.4,6.3,10.5,2.2,2.729775353850149
-Siegen-Wittgenstein,Kreis,Siegen,4324,1179,826,225,LWL,36667,13.4,6.66,10.5,1.7,2.536198270435042
-Soest,Kreis,Arnsberg,5429,1348,843,209,LWL,40276,13.4,5.75,8.5,0.9,2.459168070493715
-Steinfurt,Kreis,Münster,7744,1220,470,74,LWL,63486,14.1,5.12,9.6,2.2,2.356330109142814
-Unna,Kreis,Dortmund,7903,1543,1128,220,LWL,51228,13.0,8.16,7.0,1.5,2.29903959146368
-Viersen,Kreis,Düsseldorf,4811,1244,959,248,LVR,38659,13.0,5.71,9.6,1.2,2.28234885833563
-Warendorf,Kreis,Münster,4848,1228,368,93,LWL,39483,14.0,5.54,9.2,2.2,2.308341444422815
-Wesel,Kreis,Duisburg/Essen,9655,1633,1358,230,LVR,59137,12.9,7.04,9.2,1.4,2.325042209765652
+Name,Typ 1,Typ 2,ROR,erz. Hilfen pro 10000,35a Hilfen pro 10000,Überörtlicher Träger,Bevölkerung 6 bis 20,Anteil Kinder a.d. Gesamtbev.,SGB II-Quote,Kinderarztdichte,KJP-Dichte,Bildungsindex,Bevölkerungsdichte,Typ
+Aachen,Großer Kreis,Großer Kreis,Aachen,1657,301,LVR,73441,12.6,7.96,11.9,1.6,3.1033307061584754,823.9,Großer Kreis
+Borken,Großer Kreis,Kreis,Münster,1379,102,LWL,54698,14.4,4.53,8.7,2.2,2.1720538657593487,268.0,Großer Kreis
+Düren,Großer Kreis,Kreis,Aachen,1359,301,LVR,37189,13.3,7.63,10.3,1.6,2.5144476232394366,296.6,Großer Kreis
+Ennepe-Ruhr-Kreis,Großer Kreis,Kreis,Bochum/Hagen,1581,306,LWL,39319,12.5,8.5,10.1,1.5,2.451924747802705,766.9,Großer Kreis
+Gütersloh,Großer Kreis,Kreis,Bielefeld,1227,122,LWL,51494,14.1,5.22,8.9,1.1,2.312879464643925,375.5,Großer Kreis
+Herford,Großer Kreis,Kreis,Bielefeld,978,94,LWL,35368,13.9,6.37,9.5,1.1,2.390205371248025,564.8,Großer Kreis
+Hochsauerlandkreis,Großer Kreis,Kreis,Arnsberg,1317,131,LWL,33946,13.0,4.88,6.5,0.9,2.234437876144012,133.1,Großer Kreis
+Lippe,Großer Kreis,Kreis,Bielefeld,964,145,LWL,49849,14.4,6.82,7.1,1.1,2.511861224489796,278.6,Großer Kreis
+Mettmann,Großer Kreis,Kreis,Düsseldorf,1345,185,LVR,66139,13.5,8.03,10.0,1.2,2.712772158409052,1205.5,Großer Kreis
+Minden-Lübbecke,Großer Kreis,Kreis,Bielefeld,935,143,LWL,45686,14.3,7.34,7.3,1.1,2.42695592982148,278.2,Großer Kreis
+Märkischer Kreis,Großer Kreis,Kreis,Bochum/Hagen,1285,114,LWL,55051,13.5,7.99,7.6,1.5,2.2854529163716566,384.6,Großer Kreis
+Paderborn,Großer Kreis,Kreis,Paderborn,1172,185,LWL,44525,14.1,6.06,9.9,0.9,2.6463403518366606,253.4,Großer Kreis
+Recklinghausen,Großer Kreis,Kreis,Emscher-Lippe,1415,156,LWL,82722,13.3,10.49,9.0,1.7,2.194240508388188,816.1,Großer Kreis
+Rhein-Erft-Kreis,Großer Kreis,Kreis,Köln,1377,228,LVR,66261,13.9,6.72,8.4,2.2,2.453008239759817,678.3,Großer Kreis
+Rhein-Kreis Neuss,Großer Kreis,Kreis,Düsseldorf,1133,157,LVR,63589,13.9,6.61,10.7,1.2,2.543826373558036,792.9,Großer Kreis
+Rhein-Sieg-Kreis,Großer Kreis,Kreis,Bonn,1166,178,LVR,84114,13.9,5.82,11.2,2.0,2.5546657161418658,525.0,Großer Kreis
+Rheinisch-Bergischer Kreis,Großer Kreis,Kreis,Köln,1208,265,LVR,38195,13.4,6.3,10.5,2.2,2.729775353850149,650.0,Großer Kreis
+Siegen-Wittgenstein,Großer Kreis,Kreis,Siegen,1179,225,LWL,36667,13.4,6.66,10.5,1.7,2.536198270435042,241.9,Großer Kreis
+Soest,Großer Kreis,Kreis,Arnsberg,1348,209,LWL,40276,13.4,5.75,8.5,0.9,2.459168070493715,226.0,Großer Kreis
+Steinfurt,Großer Kreis,Kreis,Münster,1220,74,LWL,63486,14.1,5.12,9.6,2.2,2.356330109142814,251.5,Großer Kreis
+Unna,Großer Kreis,Kreis,Dortmund,1543,220,LWL,51228,13.0,8.16,7.0,1.5,2.29903959146368,724.9,Großer Kreis
+Viersen,Großer Kreis,Kreis,Düsseldorf,1244,248,LVR,38659,13.0,5.71,9.6,1.2,2.28234885833563,528.8,Großer Kreis
+Wesel,Großer Kreis,Kreis,Duisburg/Essen,1633,230,LVR,59137,12.9,7.04,9.2,1.4,2.325042209765652,439.1,Großer Kreis
+Coesfeld,Kleiner Kreis,Kreis,Münster,834,102,LWL,31210,13.7,4.54,11.1,2.2,2.2403702984398266,204.9,
+Euskirchen,Kleiner Kreis,Kreis,Aachen,937,155,LVR,27233,13.4,5.18,7.1,1.6,2.208217281950001,162.3,
+Heinsberg,Kleiner Kreis,Kreis,Aachen,1045,248,LVR,35697,13.5,6.04,7.6,1.6,2.2598108598985407,419.9,
+Höxter,Kleiner Kreis,Kreis,Paderborn,1022,162,LWL,18563,13.3,4.85,4.9,0.9,2.210839667823718,115.9,
+Kleve,Kleiner Kreis,Kreis,Duisburg/Essen,1254,242,LVR,42460,13.2,5.41,8.5,1.4,2.190921661979935,261.2,
+Oberbergischer Kreis,Kleiner Kreis,Kreis,Köln,1530,174,LVR,38412,14.0,5.52,7.6,2.2,2.5464341309271914,298.3,
+Olpe,Kleiner Kreis,Kreis,Siegen,1368,217,LWL,17911,13.5,4.3,6.0,1.7,2.2036161606316096,185.9,
+Warendorf,Kleiner Kreis,Kreis,Münster,1228,93,LWL,39483,14.0,5.54,9.2,2.2,2.308341444422815,214.2,
+Bielefeld,Kreisfreie Stadt,Kreisfreie Stadt,Bielefeld,1341,186,LWL,45255,13.6,10.03,11.8,1.1,2.848398348898772,1281.2,Kreisfreie Stadt
+Bochum,Kreisfreie Stadt,Kreisfreie Stadt,Bochum/Hagen,1311,151,LWL,43266,12.1,10.91,13.1,1.5,2.822506015176754,2462.4,Kreisfreie Stadt
+Bonn,Kreisfreie Stadt,Kreisfreie Stadt,Bonn,1059,166,LVR,43701,13.5,8.56,14.3,2.0,3.6889745166914905,2292.2,Kreisfreie Stadt
+Bottrop,Kreisfreie Stadt,Kreisfreie Stadt,Emscher-Lippe,1256,126,LWL,15050,12.7,9.03,9.3,1.7,2.1800884955752213,1178.2,Kreisfreie Stadt
+Dortmund,Kreisfreie Stadt,Kreisfreie Stadt,Dortmund,1415,260,LWL,81355,13.5,14.75,8.8,1.5,2.832054061516992,2149.8,Kreisfreie Stadt
+Duisburg,Kreisfreie Stadt,Kreisfreie Stadt,Duisburg/Essen,1511,186,LVR,71210,14.2,14.28,10.4,1.4,2.451916160101917,2157.1,Kreisfreie Stadt
+Düsseldorf,Kreisfreie Stadt,Kreisfreie Stadt,Düsseldorf,1482,69,LVR,76018,12.3,8.04,11.0,1.2,3.4898986708032043,2845.7,Kreisfreie Stadt
+Essen,Kreisfreie Stadt,Kreisfreie Stadt,Duisburg/Essen,511,176,LVR,76228,13.3,14.86,8.6,1.4,2.97061546348786,2732.2,Kreisfreie Stadt
+Gelsenkirchen,Kreisfreie Stadt,Kreisfreie Stadt,Emscher-Lippe,969,77,LWL,39987,14.9,18.8,9.9,1.7,2.274650357827775,2553.2,Kreisfreie Stadt
+Hagen,Kreisfreie Stadt,Kreisfreie Stadt,Bochum/Hagen,1128,160,LWL,27118,14.2,13.56,9.5,1.5,2.4249255141341477,1186.6,Kreisfreie Stadt
+Hamm,Kreisfreie Stadt,Kreisfreie Stadt,Dortmund,1738,220,LWL,25266,14.0,8.92,10.0,1.5,2.227224634820371,794.8,Kreisfreie Stadt
+Herne,Kreisfreie Stadt,Kreisfreie Stadt,Bochum/Hagen,1480,146,LWL,21150,13.6,14.3,7.6,1.5,2.3422598479612997,3030.9,Kreisfreie Stadt
+Krefeld,Kreisfreie Stadt,Kreisfreie Stadt,Düsseldorf,1701,159,LVR,31097,13.4,11.23,11.4,1.2,2.6248227170616065,1679.5,Kreisfreie Stadt
+Köln,Kreisfreie Stadt,Kreisfreie Stadt,Köln,1396,326,LVR,127926,12.5,10.62,12.4,2.2,3.35864811007633,2529.8,Kreisfreie Stadt
+Leverkusen,Kreisfreie Stadt,Kreisfreie Stadt,Köln,1251,284,LVR,23132,13.7,9.53,12.7,2.2,2.91863819965378,2137.5,Kreisfreie Stadt
+Mönchengladbach,Kreisfreie Stadt,Kreisfreie Stadt,Düsseldorf,1354,104,LVR,35894,13.4,12.46,12.7,1.2,2.5309252845126173,1567.5,Kreisfreie Stadt
+Mülheim an der Ruhr,Kreisfreie Stadt,Kreisfreie Stadt,Duisburg/Essen,1178,286,LVR,23013,13.3,11.24,7.5,1.4,2.961709006928406,1895.8,Kreisfreie Stadt
+Münster,Kreisfreie Stadt,Kreisfreie Stadt,Münster,1329,257,LWL,37892,12.3,6.15,18.4,2.2,3.308707635769702,1016.4,Kreisfreie Stadt
+Oberhausen,Kreisfreie Stadt,Kreisfreie Stadt,Duisburg/Essen,1703,99,LVR,28822,13.5,12.29,11.4,1.4,2.2885104219623797,2771.4,Kreisfreie Stadt
+Remscheid,Kreisfreie Stadt,Kreisfreie Stadt,Düsseldorf,1046,158,LVR,15425,13.6,9.56,13.3,1.2,2.4949546666666667,1527.5,Kreisfreie Stadt
+Solingen,Kreisfreie Stadt,Kreisfreie Stadt,Düsseldorf,1230,213,LVR,22381,13.5,9.01,11.2,1.2,2.43827325492592,1849.7,Kreisfreie Stadt
+Wuppertal,Kreisfreie Stadt,Kreisfreie Stadt,Düsseldorf,1205,164,LVR,50179,14.0,12.68,12.8,1.2,2.670879220075826,2127.2,Kreisfreie Stadt
