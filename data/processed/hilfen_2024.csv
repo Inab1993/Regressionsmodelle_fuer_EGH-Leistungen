@@ -1,7 +1,7 @@
 Name,Typ 1,Typ 2,Insgesamt,Anzahl 35a Hilfen
 Düsseldorf,Kreisfreie Stadt,Kreisfreie Stadt,11264,523
 Duisburg,Kreisfreie Stadt,Kreisfreie Stadt,10763,1327
-Essen,Kreisfreie Stadt,Kreisfreie Stadt,3894,
+Essen,Kreisfreie Stadt,Kreisfreie Stadt,3894,0
 Krefeld,Kreisfreie Stadt,Kreisfreie Stadt,5291,495
 Mönchengladbach,Kreisfreie Stadt,Kreisfreie Stadt,4860,375
 Mülheim an der Ruhr,Kreisfreie Stadt,Kreisfreie Stadt,2711,659
@@ -17,7 +17,7 @@ Wesel,Großer Kreis,Kreis,9655,1358
 Bonn,Kreisfreie Stadt,Kreisfreie Stadt,4626,725
 Köln,Kreisfreie Stadt,Kreisfreie Stadt,17855,4176
 Leverkusen,Kreisfreie Stadt,Kreisfreie Stadt,2894,656
-Aachen,Großer Kreis,Großer Kreis,12171,2209
+Aachen,Städteregion,Städteregion,12171,2209
 Düren,Großer Kreis,Kreis,5053,1121
 Rhein-Erft-Kreis,Großer Kreis,Kreis,9121,1509
 Euskirchen,Kleiner Kreis,Kreis,2553,423

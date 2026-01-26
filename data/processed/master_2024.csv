@@ -1,5 +1,4 @@
 Name,Typ 1,Typ 2,ROR,erz. Hilfen pro 10000,35a Hilfen pro 10000,Überörtlicher Träger,Bevölkerung 6 bis 20,Anteil Kinder a.d. Gesamtbev.,SGB II-Quote,Kinderarztdichte,KJP-Dichte,Bildungsindex,Bevölkerungsdichte,Typ
-Aachen,Großer Kreis,Großer Kreis,Aachen,1657,301,LVR,73441,12.6,7.96,11.9,1.6,3.1033307061584754,823.9,Großer Kreis
 Borken,Großer Kreis,Kreis,Münster,1379,102,LWL,54698,14.4,4.53,8.7,2.2,2.1720538657593487,268.0,Großer Kreis
 Düren,Großer Kreis,Kreis,Aachen,1359,301,LVR,37189,13.3,7.63,10.3,1.6,2.5144476232394366,296.6,Großer Kreis
 Ennepe-Ruhr-Kreis,Großer Kreis,Kreis,Bochum/Hagen,1581,306,LWL,39319,12.5,8.5,10.1,1.5,2.451924747802705,766.9,Großer Kreis
@@ -52,3 +51,4 @@ Oberhausen,Kreisfreie Stadt,Kreisfreie Stadt,Duisburg/Essen,1703,99,LVR,28822,13
 Remscheid,Kreisfreie Stadt,Kreisfreie Stadt,Düsseldorf,1046,158,LVR,15425,13.6,9.56,13.3,1.2,2.4949546666666667,1527.5,Kreisfreie Stadt
 Solingen,Kreisfreie Stadt,Kreisfreie Stadt,Düsseldorf,1230,213,LVR,22381,13.5,9.01,11.2,1.2,2.43827325492592,1849.7,Kreisfreie Stadt
 Wuppertal,Kreisfreie Stadt,Kreisfreie Stadt,Düsseldorf,1205,164,LVR,50179,14.0,12.68,12.8,1.2,2.670879220075826,2127.2,Kreisfreie Stadt
+Aachen,Städteregion,Städteregion,Aachen,1657,301,LVR,73441,12.6,7.96,11.9,1.6,3.1033307061584754,823.9,Städteregion
