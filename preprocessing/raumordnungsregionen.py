@@ -3,8 +3,10 @@ import re
 
 from helper.preprocessing import clean_and_sort
 
-# Quelle: https://www.bbsr.bund.de/BBSR/DE/forschung/raumbeobachtung/Raumabgrenzungen/downloads/download-referenzen.html
-df = pd.read_excel("data/raw/raumgliederungen-referenzen-2023.xlsx", skiprows=1, sheet_name="Kreisreferenz")
+""" Quelle: Bundesamt für Bauwesen und Raumordnung (2024). Referenztabellen zu Raumgliede-
+rungen des BBSR. Bundesinstitut für Bau-, Stadt- und Raumforschung (BBSR), ab-
+gerufen am 28.01.2026. URL: https://www.bbsr.bund.de/BBSR/DE/forschung/raumbeobachtung/Raumabgrenzungen/downloads/download-referenzen.html"""
+df = pd.read_excel("data/raw/2024/raumgliederungen-referenzen-2024.xlsx", skiprows=1, sheet_name="Kreisreferenz")
 
 df=df[["Kreise (2023) Name", "Raumordnungsregionen (2023) Name"]]
 df=df.rename(columns={"Kreise (2023) Name": "Name", "Raumordnungsregionen (2023) Name": "ROR"})

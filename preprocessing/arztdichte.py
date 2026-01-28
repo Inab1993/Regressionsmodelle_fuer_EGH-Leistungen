@@ -1,7 +1,8 @@
 import pandas as pd
 import re
 
-# Quelle: https://www.kbv.de/infothek/zahlen-und-fakten/gesundheitsdaten/aerzte-regionale-verteilung
+""" Quelle: Kassenärztliche Bundesvereinigung (2024). Regionale Verteilung von Ärzten. Kassenärzt-
+liche Bundesvereinigung KdöR, abgerufen am 28.01.2026. URL: https://www.kbv.de/infothek/zahlen-und-fakten/gesundheitsdaten/aerzte-regionale-verteilung"""
 df = pd.read_excel("data/raw/I.1.1.8.xls", skiprows=3, sheet_name="2024")
 
 df = df[

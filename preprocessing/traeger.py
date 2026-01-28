@@ -1,7 +1,8 @@
 import pandas as pd
 from helper.preprocessing import clean_and_sort
 
-# Quelle https://lvr.de/de/nav_main/derlvr/organisation/gebietundmitglieder/gebietundmitglieder_1.jsp
+"""Quelle Landschaftsverband Rheinland (LVR) (2026). Gebiet und Mitglieder. Landschaftsver-
+band Rheinland (LVR), abgerufen am 28.01.2026. URL: https://lvr.de/de/nav_main/derlvr/organisation/gebietundmitglieder/gebietundmitglieder_1.jsp"""
 lvr_kreise = "StädteRegion Aachen | Kreis Düren | Kreis Euskirchen | Kreis Heinsberg | Kreis Kleve | Kreis Mettmann | Kreis Viersen | Kreis Wesel | Oberbergischer Kreis | Rhein-Kreis Neuss | Rheinisch-Bergischer Kreis | Rhein-Erft-Kreis | Rhein-Sieg-Kreis"
 lvr_staedte = "Stadt Bonn | Stadt Duisburg | Stadt Düsseldorf | Stadt Essen | Stadt Köln | Stadt Krefeld | Stadt Leverkusen | Stadt Mönchengladbach | Stadt Mülheim an der Ruhr | Stadt Oberhausen | Stadt Remscheid | Stadt Solingen | Stadt Wuppertal"
 

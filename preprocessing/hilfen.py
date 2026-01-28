@@ -2,9 +2,13 @@ import pandas as pd
 import re
 from helper.preprocessing import clean_and_sort, preprocess
 from helper.functions import validate_df
-# CSV-Datei einlesen
+
 df = pd.read_csv("data/raw/2024/22517-02i.csv", sep=";", encoding="latin1", skiprows=6)
-# Quelle: https://www.landesdatenbank.nrw.de/
+
+"""Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024). Kinder- und Jugendhilfe:
+Hilfen nach § 35a SGB VIII. Landesdatenbank NRW, abgerufen am 28.01.2026. URL:
+https://www.landesdatenbank.nrw.de/ldbnrw/online?operation=table&code=22517-02i.
+"""
 
 df = df.rename(columns={"Unnamed: 2": "Name", "Eingliederungshilfe für seelisch behinderte junge Menschen § 35a SGB VIII": "Anzahl 35a Hilfen"})
 

@@ -1,7 +1,10 @@
 import pandas as pd
 from helper.preprocessing import clean_and_sort, preprocess
 
-# Quelle: https://www.landesdatenbank.nrw.de/
+"""Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW)(2024a). Katasterfläche (qkm), Be-
+völkerung und Bevölkerungsdichte - Stichtag - Gemeinden. Landesdatenbank NRW, abgerufen am 28.01.2026. 
+URL:https://www.landesdatenbank.nrw.de/ldbnrw//online?operation=table&code=12411-15i"""
+
 df = pd.read_csv("data/raw/2024/12411-15i.csv", sep=";", encoding="latin1", skiprows=3)
 
 
