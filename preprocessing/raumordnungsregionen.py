@@ -8,8 +8,8 @@ rungen des BBSR. Bundesinstitut für Bau-, Stadt- und Raumforschung (BBSR), ab-
 gerufen am 28.01.2026. URL: https://www.bbsr.bund.de/BBSR/DE/forschung/raumbeobachtung/Raumabgrenzungen/downloads/download-referenzen.html"""
 df = pd.read_excel("data/raw/2024/raumgliederungen-referenzen-2024.xlsx", skiprows=1, sheet_name="Kreisreferenz")
 
-df=df[["Kreise (2023) Name", "Raumordnungsregionen (2023) Name"]]
-df=df.rename(columns={"Kreise (2023) Name": "Name", "Raumordnungsregionen (2023) Name": "ROR"})
+df=df[["Kreise (2024) Name", "Raumordnungsregionen (2024) Name"]]
+df=df.rename(columns={"Kreise (2024) Name": "Name", "Raumordnungsregionen (2024) Name": "ROR"})
 
 df2 = pd.read_csv("data/processed/hilfen_2024.csv")
 
