@@ -1,7 +1,10 @@
 import pandas as pd
 from helper.preprocessing import clean_and_sort, preprocess
 
-# Quelle: https://www.landesdatenbank.nrw.de/
+"""Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024c). Sozialversicherungs-
+pflichtige Beschäftigte (Arbeitsort) nach Wirtschaftsabschnitte sowie Schul- und Berufsab-
+schluss - kreisfreie Städte und Kreise - Stichtag (ab 2021). Landesdatenbank NRW, abge-
+rufen am 28.01.2026. URL: https://www.landesdatenbank.nrw.de/ldbnrw//online?operation=table&code=13111-54i"""
 df = pd.read_csv("data/raw/2024/13111-54i.csv", sep=";", encoding="latin1", skiprows=6)
 
 
