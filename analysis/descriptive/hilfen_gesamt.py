@@ -5,11 +5,11 @@ import numpy as np
 from scipy.stats import shapiro
 from scipy import stats
 
-from helper.functions import summarize, read_nrw_map, find_outliers_iqr, top_bottom
+from helper.functions import summarize, read_nrw_map, find_outliers_iqr
 
 
 # Einlesen
-df = pd.read_csv("../data/processed/master_2024.csv", sep=",", encoding="UTF-8")
+df = pd.read_csv("../../data/processed/master_2024.csv", sep=",", encoding="UTF-8")
 
 x = df["35a Hilfen pro 10000"]
 print(summarize(x))
