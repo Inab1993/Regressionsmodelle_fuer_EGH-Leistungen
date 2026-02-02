@@ -1,5 +1,5 @@
 import pandas as pd
-from helper.preprocessing import clean_and_sort
+from helper.preprocessing_utils import clean_and_sort
 
 """Quelle Landschaftsverband Rheinland (LVR) (2026). Gebiet und Mitglieder. Landschaftsver-
 band Rheinland (LVR), abgerufen am 28.01.2026. URL: https://lvr.de/de/nav_main/derlvr/organisation/gebietundmitglieder/gebietundmitglieder_1.jsp"""

@@ -1,5 +1,5 @@
 import pandas as pd
-from helper.preprocessing import clean_and_sort, preprocess
+from helper.preprocessing_utils import clean_and_sort, preprocess
 
 """Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024c). Sozialversicherungs-
 pflichtige Beschäftigte (Arbeitsort) nach Wirtschaftsabschnitte sowie Schul- und Berufsab-

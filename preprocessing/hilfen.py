@@ -1,7 +1,6 @@
 import pandas as pd
 import re
-from helper.preprocessing import clean_and_sort, preprocess
-from helper.functions import validate_df
+from helper.preprocessing_utils import clean_and_sort, preprocess, validate_df
 
 df = pd.read_csv("data/raw/2024/22517-02i.csv", sep=";", encoding="latin1", skiprows=6)
 

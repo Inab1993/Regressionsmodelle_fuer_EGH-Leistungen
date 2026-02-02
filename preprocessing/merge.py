@@ -1,5 +1,5 @@
 import pandas as pd
-from helper.functions import validate_df
+from helper.preprocessing_utils import validate_df
 
 
 df_hilfen = pd.read_csv("data/processed/hilfen_2024.csv", sep=",", encoding="UTF-8")
@@ -33,7 +33,7 @@ mean = subset.apply(pd.to_numeric, errors="coerce").mean()
 df_merged.loc[df_merged["Name"] == "Essen", "35a Hilfen pro 10000"] = round(mean, 0)
 
 # Spaltennamen anpassen
-df_merged=df_merged.rename(columns={"Anteil gesamt": "Anteil Kinder a.d. Gesamtbev.",
+df_merged=df_merged.rename(columns={"Anteil gesamt": "Kinderanteil",
                      "Insgesamt": "erz. Hilfen absolut",
                      "Anzahl 35a Hilfen": "35a Hilfen absolut"})
 df_merged = df_merged[["Name",
@@ -43,8 +43,7 @@ df_merged = df_merged[["Name",
                         "erz. Hilfen pro 10000",
                         "35a Hilfen pro 10000",
                         "Überörtlicher Träger",
-                        "Bevölkerung 6 bis 20",
-                        "Anteil Kinder a.d. Gesamtbev.",
+                        "Kinderanteil",
                         "SGB II-Quote",
                         "Kinderarztdichte",
                         "KJP-Dichte",
@@ -57,13 +56,13 @@ typ_order = ["Kreisfreie Stadt", "Großer Kreis", "Städteregion", "Kleiner Krei
 df_merged["Kreisstrukturtyp"] = pd.Categorical(df_merged["Kreisstrukturtyp"], categories=typ_order, ordered=True)
 df_merged = df_merged.sort_values(by=["Kreisstrukturtyp", "Name"], ascending=[True, True])
 
-numerical_cols = ['erz. Hilfen pro 10000','35a Hilfen pro 10000','Bevölkerung 6 bis 20', 'Anteil Kinder a.d. Gesamtbev.','SGB II-Quote', 'Kinderarztdichte',  'Bevölkerungsdichte', 'Abiturquote']
+numerical_cols = ['erz. Hilfen pro 10000','35a Hilfen pro 10000', 'Kinderanteil','SGB II-Quote', 'Kinderarztdichte',  'Bevölkerungsdichte', 'Abiturquote']
 
 validate_df(df_merged,
             not_null = numerical_cols,
             positive= numerical_cols,
             numeric= numerical_cols,
-            bounds={'Anteil Kinder a.d. Gesamtbev.':(0,100),'SGB II-Quote':(0,100), 'Kinderarztdichte':(0,100), "KJP-Dichte":(0,100), 'Abiturquote': (0,1)},
+            bounds={'Kinderanteil':(0,100),'SGB II-Quote':(0,100), 'Kinderarztdichte':(0,100), "KJP-Dichte":(0,100), 'Abiturquote': (0,1)},
             key_cols=["Name"],
             df_name="Masterframe")
 
