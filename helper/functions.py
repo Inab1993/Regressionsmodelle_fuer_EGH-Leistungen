@@ -21,6 +21,8 @@ def summarize(s):
         "mean": desc["mean"],
         "median": desc["50%"],
         "std": desc["std"],
+        "max": desc["max"],
+        "min": desc["min"],
         "IQR": iqr,
         "span": span,
         "IQR/span": iqr / span,
@@ -41,8 +43,8 @@ def top_bottom(df, spalte, n=3, kreis_spalte="Name"):
 
 def top_bottom_split_double(df, spalte, n=3, name_spalte="Name"):
     # Filter
-    df_kreise = df[df["Typ 2"] == "Kreis"]
-    df_staedte = df[df["Typ 2"] == "Kreisfreie Stadt"]
+    df_kreise = df[df["Gebietskörperschaft"] == "Kreis"]
+    df_staedte = df[df["Gebietskörperschaft"] == "Kreisfreie Stadt"]
 
     # Sortieren
     sort_kreise = df_kreise.sort_values(by=spalte, ascending=True)
@@ -65,9 +67,9 @@ def top_bottom_split_double(df, spalte, n=3, name_spalte="Name"):
 
 def top_bottom_split_triple(df, spalte, n=3, name_spalte="Name"):
     # Filter
-    df_gr_kreise = df[df["Typ 1"] == "Großer Kreis"]
-    df_kl_kreise = df[df["Typ 1"] == "Kleiner Kreis"]
-    df_staedte = df[df["Typ 1"] == "Kreisfreie Stadt"]
+    df_gr_kreise = df[df["Kreisstrukturtyp"] == "Großer Kreis"]
+    df_kl_kreise = df[df["Kreisstrukturtyp"] == "Kleiner Kreis"]
+    df_staedte = df[df["Kreisstrukturtyp"] == "Kreisfreie Stadt"]
 
     # Sortieren
     sort_gr_kreise = df_gr_kreise.sort_values(by=spalte, ascending=True)
@@ -97,7 +99,7 @@ def top_bottom_split_triple(df, spalte, n=3, name_spalte="Name"):
 
 
 def read_nrw_map(df):
-    nrw = gpd.read_file("../data/NRW-map/dvg1krs_nw.shp")
+    nrw = gpd.read_file("../../data/NRW-map/dvg1krs_nw.shp")
 
     mapping = {
         "Mülheim a.d. Ruhr": "Mülheim an der Ruhr",
