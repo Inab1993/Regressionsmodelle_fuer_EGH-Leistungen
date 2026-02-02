@@ -5,8 +5,7 @@ import numpy as np
 from scipy.stats import shapiro
 from scipy import stats
 
-from helper.functions import summarize, read_nrw_map, find_outliers_iqr
-
+from helper.descriptive_utils import summarize, show_map
 
 # Einlesen
 df = pd.read_csv("../../data/processed/master_2024.csv", sep=",", encoding="UTF-8")
@@ -62,20 +61,6 @@ sns.barplot(data=df.sort_values('35a Hilfen pro 10000', ascending=False),
 plt.title("In Anspruch genommene 35a Hilfen nach Kreis/Kreisfreier Stadt, auf je 10.000 Kinder")
 plt.show()
 
-mask = find_outliers_iqr(x)
-print("Ausreißer: ", df.loc[mask, ["Name", "35a Hilfen pro 10000"]])
 
-# Choroplethenkarte generieren
-nrw = read_nrw_map(df)
 
-### KI-generiert
-fig, ax = plt.subplots(1, 1, figsize=(18, 21))
-nrw.plot(column="35a Hilfen pro 10000", ax=ax, legend=True, cmap="OrRd", edgecolor="black")
-
-for idx, row in nrw.iterrows():
-    x, y = row['geometry'].centroid.x, row['geometry'].centroid.y
-    ax.text(x, y, row['GN'], fontsize=8, ha='center', va='center')
-
-ax.set_title("In Anspruch genommene 35a Hilfen in NRW auf je 10.000 junge Menschen")
-plt.show()
-####
+nrw = show_map(df)

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from helper.functions import read_nrw_map, summarize
+from helper.descriptive_utils import summarize
 
 df = pd.read_csv("../../data/processed/master_2024.csv", sep=",", encoding="UTF-8")
 

@@ -6,12 +6,24 @@ import numpy as np
 from PIL.ImageColor import colormap
 from scipy import stats
 
-from helper.functions import summarize,read_nrw_map, find_outliers_iqr
+from helper.descriptive_utils import summarize,read_nrw_map, grouped_summary, outlier_table
 
 # Einlesen
 df = pd.read_csv("../../data/processed/master_2024.csv", sep=",", encoding="UTF-8")
 
 col ="SGB II-Quote"
+
+df_cut = df[df["Name"] != "Aachen"]
+
+print(summarize(df, col, shapiro=False), "\n")
+
+print(grouped_summary(df_cut, col, ["Kreisstrukturtyp"], shapiro=False), "\n")
+print(grouped_summary(df_cut, col, ["Gebietskörperschaft"], shapiro=False), "\n")
+print(grouped_summary(df_cut, col, ["Überörtlicher Träger"], shapiro=False), "\n")
+
+print(outlier_table(df, col))
+
+"""
 sgbii = df[col]
 
 summarize(sgbii)
@@ -56,20 +68,23 @@ plt.show()
 
 df = df[df["Name"] != "Aachen"]
 
+col_x = sgbii
+col_y= "Kreisstrukturtyp"
 
-summary_by_type2 = (
-    df
-    .groupby("Gebietskörperschaft")[col]
-    .apply(summarize)
-)
-print(summary_by_type2)
+y_gr_kreis = df.loc[df[col_y] == "Großer Kreis", col_x]
+y_kl_kreis = df.loc[df[col_y] == "Kleiner Kreis", col_x]
+y_stadt = df.loc[df[col_y] == "Kreisfreie Stadt", col_x]
 
-summary_by_type1 = (
-    df
-    .groupby("Kreisstrukturtyp")[col]
-    .apply(summarize)
-)
-print(summary_by_type1)
+print("n großer Kreis:", y_gr_kreis.size, " | n kleiner Kreis:", y_kl_kreis.size, " | n kreisfreie Stadt:", y_stadt.size)
+
+desc_table = pd.DataFrame({
+    "große Kreise": summarize(y_gr_kreis),
+    "kleine Kreise": summarize(y_kl_kreis),
+    "kreisfreie Städte": summarize(y_stadt),
+})
+
+
+print(desc_table.round(3))
 
 
 plt.figure(figsize=(8,5))
@@ -101,5 +116,5 @@ mask_by_type = (
 )
 
 print(df.loc[mask_by_type, ["Name", "Kreisstrukturtyp", col]])
-
+"""
 

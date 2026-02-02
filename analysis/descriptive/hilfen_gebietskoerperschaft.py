@@ -3,7 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-from helper.functions import top_bottom_split_double, find_outliers_iqr, summarize
+from helper.descriptive_utils import summarize
 # Einlesen
 df = pd.read_csv("../../data/processed/master_2024.csv", sep=",", encoding="UTF-8")
 

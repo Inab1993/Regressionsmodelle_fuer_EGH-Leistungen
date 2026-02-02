@@ -4,11 +4,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 
-from helper.functions import find_outliers_iqr, summarize, read_nrw_map
+from helper.descriptive_utils import summarize, read_nrw_map, grouped_summary, outlier_table
 
 df = pd.read_csv("../../data/processed/master_2024.csv", sep=",", encoding="UTF-8")
 
 col="Abiturquote"
+
+df = df[df["Name"] != "Aachen"]
+
+print(summarize(df, col, shapiro=False), "\n")
+
+print(grouped_summary(df, col, ["Kreisstrukturtyp"], shapiro=False), "\n")
+print(grouped_summary(df, col, ["Gebietskörperschaft"], shapiro=False), "\n")
+print(grouped_summary(df, col, ["Überörtlicher Träger"], shapiro=False), "\n")
+
+print(outlier_table(df, col))
+
+"""
 bildung = df[col]
 
 summarize(bildung)
@@ -93,4 +105,4 @@ mask_by_type = (
     .transform(find_outliers_iqr)
 )
 
-print(df.loc[mask_by_type, ["Name", "Kreisstrukturtyp", col]])
+print(df.loc[mask_by_type, ["Name", "Kreisstrukturtyp", col]])"""

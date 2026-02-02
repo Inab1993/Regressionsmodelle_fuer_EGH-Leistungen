@@ -2,7 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from helper.functions import summarize, read_nrw_map, find_outliers_iqr
+from helper.descriptive_utils import summarize
 
 # Einlesen
 df = pd.read_csv("../../data/processed/master_2024.csv", sep=",", encoding="UTF-8")
@@ -35,21 +35,7 @@ nrw = read_nrw_map(df)
 fig, ax = plt.subplots(1, 1, figsize=(18, 21))
 nrw.plot(column="35a Hilfen pro 10000", ax=ax, legend=True, cmap="OrRd", edgecolor="black")
 
-nrw[nrw["Kreisstrukturtyp"] == "Großer Kreis"].plot(
-    ax=ax,
-    facecolor="none",
-    edgecolor="black",
-    hatch='o',
-    linewidth=0
-)
 
-nrw[nrw["Kreisstrukturtyp"] == "Kleiner Kreis"].plot(
-    ax=ax,
-    facecolor="none",
-    edgecolor="black",
-    hatch='.',
-    linewidth=0
-)
 
 for idx, row in nrw.iterrows():
     x, y = row['geometry'].centroid.x, row['geometry'].centroid.y
