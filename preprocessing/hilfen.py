@@ -52,18 +52,18 @@ def extract(raw: str, grosser_kreis: bool):
 
     return raw, "Unbekannt"
 
-df[["Name", "Typ 1"]] = df.apply(
+df[["Name", "Kreisstrukturtyp"]] = df.apply(
     lambda r: pd.Series(extract(r["Name"], r["Kreis mit großer Gemeinde"])),
     axis=1
 )
 
-df["Typ 2"] = df["Typ 1"].replace(
+df["Gebietskörperschaft"] = df["Kreisstrukturtyp"].replace(
     {"Großer Kreis": "Kreis", "Kleiner Kreis": "Kreis"})
 
-df = clean_and_sort(df, "Typ 1", "Typ 2", "Insgesamt", "Anzahl 35a Hilfen")
+df = clean_and_sort(df, "Kreisstrukturtyp", "Gebietskörperschaft", "Insgesamt", "Anzahl 35a Hilfen")
 
-df.loc[df["Name"] == "Aachen", "Typ 1"] ="Städteregion"
-df.loc[df["Name"] == "Aachen", "Typ 2"] = "Städteregion"
+df.loc[df["Name"] == "Aachen", "Kreisstrukturtyp"] ="Städteregion"
+df.loc[df["Name"] == "Aachen", "Gebietskörperschaft"] = "Städteregion"
 df.loc[df["Name"] == "Essen", "Anzahl 35a Hilfen"] = 0 #dummy
 
 validate_df(

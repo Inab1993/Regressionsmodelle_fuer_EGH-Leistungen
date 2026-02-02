@@ -37,8 +37,8 @@ df_merged=df_merged.rename(columns={"Anteil gesamt": "Anteil Kinder a.d. Gesamtb
                      "Insgesamt": "erz. Hilfen absolut",
                      "Anzahl 35a Hilfen": "35a Hilfen absolut"})
 df_merged = df_merged[["Name",
-                        "Typ 1",
-                        "Typ 2",
+                        "Kreisstrukturtyp",
+                        "Gebietskörperschaft",
                         "ROR",
                         "erz. Hilfen pro 10000",
                         "35a Hilfen pro 10000",
@@ -53,9 +53,9 @@ df_merged = df_merged[["Name",
                         ]]
 
 
-typ_order = ["Kreisfreie Stadt", "Großer Kreis", "Städteregion", "Kreis"]
-df_merged["Typ"] = pd.Categorical(df_merged["Typ 1"], categories=typ_order, ordered=True)
-df_merged = df_merged.sort_values(by=["Typ 1", "Name"], ascending=[True, True])
+typ_order = ["Kreisfreie Stadt", "Großer Kreis", "Städteregion", "Kleiner Kreis"]
+df_merged["Kreisstrukturtyp"] = pd.Categorical(df_merged["Kreisstrukturtyp"], categories=typ_order, ordered=True)
+df_merged = df_merged.sort_values(by=["Kreisstrukturtyp", "Name"], ascending=[True, True])
 
 numerical_cols = ['erz. Hilfen pro 10000','35a Hilfen pro 10000','Bevölkerung 6 bis 20', 'Anteil Kinder a.d. Gesamtbev.','SGB II-Quote', 'Kinderarztdichte',  'Bevölkerungsdichte', 'Abiturquote']
 
