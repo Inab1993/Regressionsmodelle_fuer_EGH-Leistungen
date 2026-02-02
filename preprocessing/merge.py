@@ -7,7 +7,7 @@ df_bevoelkerung = pd.read_csv("data/processed/bevoelkerung_2024.csv", sep=",", e
 df_sgbii = pd.read_csv("data/processed/sgb2_2024.csv", sep=",", encoding="UTF-8")
 df_arztdichte = pd.read_csv("data/processed/arztdichte_2024.csv", sep=",", encoding="UTF-8")
 df_traeger = pd.read_csv("data/processed/traeger.csv", sep=",", encoding="UTF-8")
-df_bildung = pd.read_csv("data/processed/bildungsabschluss_2024.csv", sep=",", encoding="UTF-8")
+df_bildung = pd.read_csv("data/processed/abiturquote_2024.csv", sep=",", encoding="UTF-8")
 df_dichte = pd.read_csv("data/processed/bevoelkerungsdichte_2024.csv", sep=",", encoding="UTF-8")
 
 dfs_to_merge = [df_bevoelkerung,df_sgbii, df_arztdichte, df_traeger, df_bildung, df_dichte]
@@ -48,21 +48,22 @@ df_merged = df_merged[["Name",
                         "SGB II-Quote",
                         "Kinderarztdichte",
                         "KJP-Dichte",
-                        "Bildungsindex",
-                        "Bevölkerungsdichte"]]
+                        "Abiturquote",
+                        "Bevölkerungsdichte",
+                        ]]
 
 
 typ_order = ["Kreisfreie Stadt", "Großer Kreis", "Städteregion", "Kreis"]
 df_merged["Typ"] = pd.Categorical(df_merged["Typ 1"], categories=typ_order, ordered=True)
 df_merged = df_merged.sort_values(by=["Typ 1", "Name"], ascending=[True, True])
 
-numerical_cols = ['erz. Hilfen pro 10000','35a Hilfen pro 10000','Bevölkerung 6 bis 20', 'Anteil Kinder a.d. Gesamtbev.','SGB II-Quote', 'Kinderarztdichte', 'Bildungsindex', 'Bevölkerungsdichte']
+numerical_cols = ['erz. Hilfen pro 10000','35a Hilfen pro 10000','Bevölkerung 6 bis 20', 'Anteil Kinder a.d. Gesamtbev.','SGB II-Quote', 'Kinderarztdichte',  'Bevölkerungsdichte', 'Abiturquote']
 
 validate_df(df_merged,
             not_null = numerical_cols,
             positive= numerical_cols,
             numeric= numerical_cols,
-            bounds={'Anteil Kinder a.d. Gesamtbev.':(0,100),'SGB II-Quote':(0,100), 'Kinderarztdichte':(0,100), "KJP-Dichte":(0,100), "Bildungsindex":(0,5)},
+            bounds={'Anteil Kinder a.d. Gesamtbev.':(0,100),'SGB II-Quote':(0,100), 'Kinderarztdichte':(0,100), "KJP-Dichte":(0,100), 'Abiturquote': (0,1)},
             key_cols=["Name"],
             df_name="Masterframe")
 
