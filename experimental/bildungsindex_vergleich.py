@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from scipy.stats import ks_2samp
 
-from helper.preprocessing import clean_and_sort, preprocess
+from utils.preprocessing_utils import clean_and_sort, preprocess
 
 """Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024c). Sozialversicherungs-
 pflichtige Beschäftigte (Arbeitsort) nach Wirtschaftsabschnitte sowie Schul- und Berufsab-

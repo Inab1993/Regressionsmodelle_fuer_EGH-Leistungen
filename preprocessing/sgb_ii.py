@@ -1,5 +1,5 @@
 import pandas as pd
-from helper.preprocessing_utils import preprocess, clean_and_sort
+from utils.preprocessing_utils import preprocess, clean_and_sort
 
 # CSV-Datei einlesen
 """Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024c). Sozialberichterstattung

@@ -1,5 +1,5 @@
 import pandas as pd
-from helper.preprocessing_utils import clean_and_sort, preprocess
+from utils.preprocessing_utils import clean_and_sort, preprocess
 
 """Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW)(2024a). Katasterfläche (qkm), Be-
 völkerung und Bevölkerungsdichte - Stichtag - Gemeinden. Landesdatenbank NRW, abgerufen am 28.01.2026. 

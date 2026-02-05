@@ -1,7 +1,7 @@
 import pandas as pd
 import re
 
-from helper.preprocessing_utils import clean_and_sort
+from utils.preprocessing_utils import clean_and_sort
 
 """ Quelle: Bundesamt für Bauwesen und Raumordnung (2024). Referenztabellen zu Raumgliede-
 rungen des BBSR. Bundesinstitut für Bau-, Stadt- und Raumforschung (BBSR), ab-
