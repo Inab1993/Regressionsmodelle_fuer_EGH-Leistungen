@@ -1,5 +1,6 @@
 import subprocess
 import sys
+from pathlib import Path
 
 #def run_single_file(file_path):
 #    subprocess.run([sys.executable, file_path], check=False)
@@ -9,6 +10,8 @@ if __name__ == "__main__":
 #    run_single_file(datei)
 
 
+    out = Path("data/processed")
+    out.mkdir(parents=True, exist_ok=True)
     subprocess.run([sys.executable, "preprocessing/hilfen.py"], check=False)
     subprocess.run([sys.executable, "preprocessing/raumordnungsregionen.py"], check=False)
     subprocess.run([sys.executable, "preprocessing/arztdichte.py"], check=False)

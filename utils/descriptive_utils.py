@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-
+from pathlib import Path
 from typing import Optional, Tuple
 
 import numpy as np
@@ -21,7 +21,7 @@ def _iqr_bounds(x: pd.Series, k: float = 1.5) -> Tuple[float, float, float, floa
     return float(q1), float(q3), float(lower), float(upper)
 
 
-def summarize(df: pd.DataFrame, var: str,shapiro: bool = True) -> pd.Series:
+def summarize(df: pd.DataFrame, var: str,shapiro: bool = True, to_print=True) -> pd.Series:
     if var not in df.columns:
         raise KeyError(f"Variable '{var}' nicht in df.")
 
@@ -55,16 +55,26 @@ def summarize(df: pd.DataFrame, var: str,shapiro: bool = True) -> pd.Series:
         summary["Shapiro-Statistik"] = float(sh.statistic)
         summary["mit p-value"] = float(sh.pvalue)
 
-    return pd.Series(summary).round(3)
+    out = pd.Series(summary, name=f"{var}").round(3)
+
+    out.index.name = "Variable"
+
+    path = Path(f"../../tables/{var}")
+    path.mkdir(parents=True, exist_ok=True)
+
+    if to_print:
+        out.to_csv(path / f"{var}_summary.csv")
+        return out
+    else:
+        return out
 
 
 def grouped_summary(
     df: pd.DataFrame,
     var: str,
     group_col: str,
-    shapiro: bool = True,
-    iqr_k: float = 1.5,
-) -> pd.DataFrame:
+    shapiro: bool = True
+) -> None:
 
 
     if var not in df.columns:
@@ -72,12 +82,13 @@ def grouped_summary(
 
     series_by_group = (
         df.groupby(group_col, dropna=False)[var]
-        .apply(lambda s: summarize(s.to_frame(name=var), var=var, shapiro=shapiro))
+        .apply(lambda s: summarize(s.to_frame(name=var), var=var, shapiro=shapiro, to_print=False))
     )
 
     out = series_by_group.unstack(level=group_col)
-    out.index.name = None
-    return out
+    out.index.name = "Strukturvariable"
+
+    out.to_csv(Path(f"../../tables/{var}") / f"{var}_by_{group_col}_summary.csv")
 
 
 # Outlier
@@ -86,7 +97,7 @@ def outlier_table(
     var: str,
     id_col: Optional[str] = "Name",
     iqr_k: float = 1.5,
-) -> pd.DataFrame:
+) -> None:
     x = df[var]
     _, _, lower, upper = _iqr_bounds(x, k=iqr_k)
 
@@ -106,10 +117,14 @@ def outlier_table(
         "oberer Outlier",
     )
 
-    return (
-        out
-        .sort_values(["Outlier-Typ", var])
-        .reset_index(drop=True)
+    out.sort_values(["Outlier-Typ", var]).reset_index(drop=True)
+
+
+    path = Path(f"../../tables/{var}")
+    path.mkdir(parents=True, exist_ok=True)
+    out.to_csv(
+        path / f"{var}_outlier.csv",
+        index=False
     )
 
 
@@ -118,20 +133,29 @@ def plot_distribution(
     df: pd.DataFrame,
     var: str,
     bins: int = 20,
-    bw_method: int = 0.5,
+    bw_method: float = 0.5,
 ) -> None:
+
     x = df[var]
     xx = np.linspace(x.min(), x.max(), 200)
 
     plt.figure()
-    plt.hist(x, bins=bins)
+    plt.hist(x, bins=bins, density=True)
     plt.title(f"Verteilung: {var}")
     plt.xlabel(var)
     plt.ylabel("Häufigkeit")
 
     kde = stats.gaussian_kde(x.to_numpy(), bw_method=bw_method)
     plt.plot(xx, kde(xx), color="red")
-    plt.show()
+
+    path = Path(f"../../figures/{var}")
+    path.mkdir(parents=True, exist_ok=True)
+    plt.savefig(
+        path / f"{var}_dist.png",
+        dpi=300,
+        bbox_inches="tight"
+    )
+    plt.close()
 
 # Boxplot nach Gruppen
 def boxplot_by_group(
@@ -171,7 +195,15 @@ def boxplot_by_group(
     plt.xlabel(group_col)
     plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
-    plt.show()
+
+    path = Path(f"../../figures/{var}")
+    path.mkdir(parents=True, exist_ok=True)
+    plt.savefig(
+        path / f"{var}_by_{group_col}_boxplot.png",
+        dpi=300,
+        bbox_inches="tight"
+    )
+    plt.close()
 
 # Scatterplot
 def plot_scatter(
@@ -180,6 +212,8 @@ def plot_scatter(
     y: str="35a Hilfen pro 10000",
     hue: Optional[str] = None,
 ) -> None:
+    if x == y:
+        return None
     d = df.copy()
 
     plt.figure()
@@ -194,7 +228,23 @@ def plot_scatter(
     plt.xlabel(x)
     plt.ylabel(y)
     plt.tight_layout()
-    plt.show()
+
+    path = Path(f"../../figures/{x}")
+    path.mkdir(parents=True, exist_ok=True)
+
+    if hue is not None:
+        plt.savefig(
+            path / f"{x}_vs_{y}__by_{hue}_scatter.png",
+            dpi=300,
+            bbox_inches="tight"
+        )
+    else:
+        plt.savefig(
+            path / f"{x}_vs_{y}_scatter.png",
+            dpi=300,
+            bbox_inches="tight"
+        )
+    plt.close()
 
 
 # Choroplethenkarte
@@ -245,15 +295,32 @@ def show_map(df,
         x, y = row['geometry'].centroid.x, row['geometry'].centroid.y
         ax.text(x, y, row['GN'], fontsize=8, ha='center', va='center')
 
-    plt.show()
+    path = Path(f"../../figures/{var}")
+    path.mkdir(parents=True, exist_ok=True)
 
+    if group_col is None:
+        plt.savefig(
+            path / f"{var}_nrw_map.png",
+            dpi=300,
+            bbox_inches="tight"
+        )
+    else:
+        plt.savefig(
+            path / f"{var}_by_{group_col}_nrw_map.png",
+            dpi=300,
+            bbox_inches="tight"
+        )
+    plt.close()
 
 # Korrelation
 def corr_pair(
     df: pd.DataFrame,
     x: str,
     y: str="35a Hilfen pro 10000",
+    to_print=False
 ) -> pd.DataFrame:
+    if x == y:
+        return None
     dx = df[x]
     dy = df[y]
     mask = dx.notna() & dy.notna()
@@ -270,12 +337,58 @@ def corr_pair(
     pr = stats.pearsonr(x2, y2)
     sr = stats.spearmanr(x2, y2)
 
-    return pd.DataFrame([{
-        "x": x,
+    out= pd.DataFrame([{
         "pearson_r": float(pr.statistic), "pearson_p": float(pr.pvalue),
         "spearman_r": float(sr.statistic), "spearman_p": float(sr.pvalue),
     }])
 
+    path = Path(f"../../tables/{x}")
+    path.mkdir(parents=True, exist_ok=True)
 
+    if to_print:
+        out.to_csv(path / f"{x}_to_{y}_correlation.csv")
+        return out
+    else:
+        return out
+
+
+
+def corr_pair_by_type(
+    df: pd.DataFrame,
+    x: str,
+    group: str,
+    y: str="35a Hilfen pro 10000",
+) -> None:
+    if x == y:
+        return None
+    out = (df
+        .groupby(group)
+        .apply(lambda g: corr_pair(g, x, y, to_print=True), include_groups=False)
+        .reset_index(level=0)
+    )
+    out.to_csv(Path(f"../../tables/{x}") / f"{x}_to_{y}_by_{group}_correlation.csv")
+
+
+def basic_descriptive_analysis(df, var, y="35a Hilfen pro 10000", shapiro=True) -> None:
+
+    summarize(df, var, shapiro=shapiro),
+    outlier_table(df, var)
+    plot_distribution(df, var)
+
+    corr_pair(df, var, y)
+    plot_scatter(df, var, y)
+
+    show_map(df, var)
+
+
+def descriptive_analysis_by_group(df, var,  group_col, y="35a Hilfen pro 10000", shapiro=True)-> None:
+
+    grouped_summary(df, var, group_col, shapiro=shapiro)
+
+    corr_pair_by_type(df, var, group_col, y)
+
+    boxplot_by_group(df, var, group_col)
+
+    plot_scatter(df, var, y, hue=group_col)
 
 
