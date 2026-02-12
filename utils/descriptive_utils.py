@@ -8,17 +8,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import geopandas as gpd
+from pandas import DataFrame
 
 from scipy import stats
 
 
-def _iqr_bounds(x: pd.Series, k: float = 1.5) -> Tuple[float, float, float, float]:
+def _iqr_bounds(x: pd.Series, k: float = 1.5) -> Tuple[float, float]:
     q1 = x.quantile(0.25)
     q3 = x.quantile(0.75)
     iqr = q3 - q1
     lower = q1 - k * iqr
     upper = q3 + k * iqr
-    return float(q1), float(q3), float(lower), float(upper)
+    return float(lower), float(upper)
 
 
 def summarize(df: pd.DataFrame, var: str,shapiro: bool = True, to_print=True) -> pd.Series:
@@ -99,7 +100,7 @@ def outlier_table(
     iqr_k: float = 1.5,
 ) -> None:
     x = df[var]
-    _, _, lower, upper = _iqr_bounds(x, k=iqr_k)
+    lower, upper = _iqr_bounds(x, k=iqr_k)
 
     mask_lower = df[var] < lower
     mask_upper = df[var] > upper
@@ -127,6 +128,15 @@ def outlier_table(
         index=False
     )
 
+
+def clean_outlier(df, var, iqr_k: float = 1.5,) -> DataFrame:
+    x = df[var]
+    lower, upper = _iqr_bounds(x, k=iqr_k)
+
+    df.loc[df[var] < lower, var] = lower
+    df.loc[df[var] > upper, var] = upper
+
+    return df
 
 # Dist-Plot mit KDE
 def plot_distribution(
@@ -317,8 +327,8 @@ def corr_pair(
     df: pd.DataFrame,
     x: str,
     y: str="35a Hilfen pro 10000",
-    to_print=False
-) -> pd.DataFrame:
+    to_print=True
+) -> pd.DataFrame | None:
     if x == y:
         return None
     dx = df[x]
@@ -358,15 +368,16 @@ def corr_pair_by_type(
     x: str,
     group: str,
     y: str="35a Hilfen pro 10000",
-) -> None:
+) -> DataFrame | None:
     if x == y:
         return None
     out = (df
         .groupby(group)
-        .apply(lambda g: corr_pair(g, x, y, to_print=True), include_groups=False)
+        .apply(lambda g: corr_pair(g, x, y, to_print=False), include_groups=False)
         .reset_index(level=0)
     )
     out.to_csv(Path(f"../../tables/{x}") / f"{x}_to_{y}_by_{group}_correlation.csv")
+    return out
 
 
 def basic_descriptive_analysis(df, var, y="35a Hilfen pro 10000", shapiro=True) -> None:
@@ -390,5 +401,7 @@ def descriptive_analysis_by_group(df, var,  group_col, y="35a Hilfen pro 10000",
     boxplot_by_group(df, var, group_col)
 
     plot_scatter(df, var, y, hue=group_col)
+
+
 
 
