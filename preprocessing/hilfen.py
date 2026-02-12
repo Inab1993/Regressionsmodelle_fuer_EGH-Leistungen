@@ -4,13 +4,15 @@ from utils.preprocessing_utils import clean_and_sort, preprocess, validate_df
 
 df = pd.read_csv("data/raw/2024/22517-02i.csv", sep=";", encoding="latin1", skiprows=6)
 
-"""Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024). Kinder- und Jugendhilfe:
+"""Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024f). Kinder- und Jugendhilfe:
 Hilfen nach § 35a SGB VIII. Landesdatenbank NRW, abgerufen am 28.01.2026. URL:
 https://www.landesdatenbank.nrw.de/ldbnrw/online?operation=table&code=22517-02i.
 """
 
 df = df.rename(columns={"Unnamed: 2": "Name", "Eingliederungshilfe für seelisch behinderte junge Menschen § 35a SGB VIII": "Anzahl 35a Hilfen"})
 
+
+# nach der Verordnung zur Bestimmung der Großen kreisangehörigen Städte und der Mittleren kreisangehörigen Städte nach § 4 der Gemeindeordnung für das Land Nordrhein-Westfalen
 grosse_kommunen = ("Arnsberg, Bergheim, Bergisch Gladbach, Bocholt, Castrop-Rauxel, "
                    "Detmold, Dinslaken, Dormagen, Dorsten, Düren, Gladbeck, Grevenbroich, "
                    "Gütersloh, Herford, Herten, Iserlohn, Kerpen, Lippstadt, Lüdenscheid, "

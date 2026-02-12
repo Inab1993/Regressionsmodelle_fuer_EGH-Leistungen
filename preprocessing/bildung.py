@@ -1,7 +1,7 @@
 import pandas as pd
 from utils.preprocessing_utils import clean_and_sort, preprocess
 
-"""Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024c). Sozialversicherungs-
+"""Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024d). Sozialversicherungs-
 pflichtige Beschäftigte (Arbeitsort) nach Wirtschaftsabschnitte sowie Schul- und Berufsab-
 schluss - kreisfreie Städte und Kreise - Stichtag (ab 2021). Landesdatenbank NRW, abge-
 rufen am 28.01.2026. URL: https://www.landesdatenbank.nrw.de/ldbnrw//online?operation=table&code=13111-54i"""
@@ -18,7 +18,7 @@ type_dict = {
 
 df = preprocess(df, type_dict)
 
-df['Abiturquote'] = df['mit Abitur/Fachabitur'].div(df["Insgesamt"], axis=0)
+df['Abiturquote'] = (df['mit Abitur/Fachabitur'].div(df["Insgesamt"], axis=0))*100
 
 df = clean_and_sort(df, 'Abiturquote')
 

@@ -2,7 +2,7 @@ import pandas as pd
 from utils.preprocessing_utils import preprocess, clean_and_sort
 
 # CSV-Datei einlesen
-"""Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024c). Sozialberichterstattung
+"""Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024e). Sozialberichterstattung
 in der amtlichen Statistik: Empfänger/innen von sozialen Mindestsicherungsleistungen nach
 Art der Leistung - Gemeinden (Wohnortprinzip) - Jahr. Landesdatenbank NRW, abgeru-
 fen am 28.01.2026. URL: https://www.landesdatenbank.nrw.de/ldbnrw//online?operation=table&code=22811-05i"""
