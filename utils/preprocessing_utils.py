@@ -1,7 +1,11 @@
+from dataclasses import dataclass
+
 import pandas as pd
 import re
 
 import unicodedata
+
+from utils.commons import iqr_bounds
 
 
 def preprocess(
@@ -111,7 +115,8 @@ def validate_df(
     numeric: list[str] = None,
     bounds: dict[str, tuple] = None,
     key_cols: list[str] = None,
-    df_name: str = "DataFrame"
+    df_name: str = "DataFrame",
+    length: int = 53
 ):
     report = []
 
@@ -162,8 +167,8 @@ def validate_df(
             )
 
     # korrekte Länge
-    if len(df) != 53:
-        raise ValueError(f"Unerwartete Anzahl Zeilen: {len(df)} (erwartet: 53)")
+    if len(df) != length:
+        raise ValueError(f"Unerwartete Anzahl Zeilen: {len(df)} (erwartet: {length})")
 
     if report:
         print("Validierungsbericht")
@@ -174,3 +179,28 @@ def validate_df(
 
     return report
 
+
+def winsorize_iqr(x: pd.Series, k: float = 1.5) -> pd.Series:
+    lower, upper = iqr_bounds(x, k=k)
+    return x.clip(lower=lower, upper=upper)
+
+
+
+CLEAN_SUFFIX = "__clean"
+
+@dataclass
+class DataView:
+    df: pd.DataFrame
+
+    def add_clean_column(self, col: str, cleaner_func) -> None:
+        self.df[col + CLEAN_SUFFIX] = cleaner_func(self.df[col])
+
+    def use(self, cleaned: bool, cols: list[str]) -> pd.DataFrame:
+        out = self.df.copy()
+        for c in cols:
+            if cleaned:
+                cc = c + CLEAN_SUFFIX
+                if cc not in out.columns:
+                    raise KeyError(f"Clean-Spalte fehlt: {cc}. Erst add_clean_column() ausführen.")
+                out[c] = out[cc]
+        return out
