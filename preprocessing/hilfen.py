@@ -4,8 +4,9 @@ from utils.preprocessing_utils import clean_and_sort, preprocess, validate_df
 
 df = pd.read_csv("data/raw/2024/22517-02i.csv", sep=";", encoding="latin1", skiprows=6)
 
-"""Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024f). Kinder- und Jugendhilfe:
-Hilfen nach § 35a SGB VIII. Landesdatenbank NRW, abgerufen am 28.01.2026. URL:
+"""Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024g). Statistik der erzieherischen Hilfen:
+In Anspruch genommene und begonnene Hilfen/Beratungen
+nach Art der Hilfe - Jugendämter - Jahr. Landesdatenbank NRW, abgerufen am 28.01.2026. URL:
 https://www.landesdatenbank.nrw.de/ldbnrw/online?operation=table&code=22517-02i.
 """
 
@@ -73,6 +74,7 @@ validate_df(
     non_negative=["Insgesamt", "Anzahl 35a Hilfen"],
     numeric=["Insgesamt", "Anzahl 35a Hilfen"],
     key_cols=["Name"],
+    df_name="Frame: 35a-Hilfen 2024"
 )
 
 # saubere Tabelle abspeichern
