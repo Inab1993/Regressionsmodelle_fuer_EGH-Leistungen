@@ -2,30 +2,46 @@ from utils.preprocessing_utils import clean_and_sort, preprocess
 import pandas as pd
 
 """Quelle: Information und Technik Nordrhein-Westfalen (IT.NRW) (2024b). Bevölkerungsstand nach Altersjahren (90) - Gemeinden - Stichtag. Landesdatenbank NRW, abgerufen am
-28.01.2026. URL:https://www.landesdatenbank.nrw.de/ldbnrw//online?operation=table&code=12411-09i"""
+28.01.2026. URL:https://www.landesdatenbank.nrw.de/ldbnrw//online?operation=table&code=12411-09i 
+ """
 
 df = pd.read_csv("data/raw/2024/12411-09i.csv", sep=";", encoding="latin1", skiprows=6)
 
-jahre = ['6 bis unter 10 Jahre', '10 bis unter 15 Jahre', '15 bis unter 18 Jahre', '18 bis unter 20 Jahre']
 
-df = df[['Unnamed: 2', 'Insgesamt', *jahre]]
+jahre_6_bis_21 = df.columns[10:25] #unter 7 bis unter 21
+jahre_u6 = df.columns[5:10]
+
+df = df[['Unnamed: 2', 'Insgesamt', *jahre_6_bis_21, *jahre_u6]]
 df = df.rename(columns={"Unnamed: 2": "Name", "Insgesamt": "Gesamtbevölkerung"})
 
 type_dict = {"Gesamtbevölkerung": "int",
-    **{jahr: "int" for jahr in jahre}
+    **{jahr: "int" for jahr in jahre_6_bis_21},
+    **{jahr: "int" for jahr in jahre_u6},
 }
 
 df = preprocess(df, type_dict)
 
 
-df["Bevölkerung 6 bis 20"] = df[jahre].sum(axis=1)
-df = df.drop(columns =jahre)
+df["Bevölkerung u6"] = df[jahre_u6].sum(axis=1)
+df = df.drop(columns =jahre_u6)
 
-df["Anteil gesamt"] = (
-    df["Bevölkerung 6 bis 20"] / df["Gesamtbevölkerung"] *100
+df["Bevölkerung 6 bis 21"] = df[jahre_6_bis_21].sum(axis=1)
+
+jahre_19_bis_21 = df.columns[22:25]
+
+df["Bevölkerung 6 bis 18"] = (
+    df["Bevölkerung 6 bis 21"]
+    - df[jahre_19_bis_21].sum(axis=1)
 )
 
-df = clean_and_sort(df, "Gesamtbevölkerung", "Bevölkerung 6 bis 20", "Anteil gesamt")
+df = df.drop(columns =jahre_6_bis_21)
+
+
+df["Anteil 6 bis 21jähriger"] = (
+    df["Bevölkerung 6 bis 21"] / df["Gesamtbevölkerung"] *100
+)
+
+df = clean_and_sort(df, "Gesamtbevölkerung", "Bevölkerung u6", "Bevölkerung 6 bis 21","Bevölkerung 6 bis 18", "Anteil 6 bis 21jähriger")
 
 # speichern
 df.to_csv("data/processed/bevoelkerung_2024.csv", index=False)

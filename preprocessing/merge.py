@@ -20,10 +20,10 @@ for df_other in dfs_to_merge:
 print(len(df_merged))
 
 # relative Werte berechnen
-df_merged["35a Hilfen pro 10000"] = (df_merged["Anzahl 35a Hilfen"] / df_merged["Bevölkerung 6 bis 20"] * 10000).round(0).astype(int)
-df_merged["erz. Hilfen pro 10000"] = (df_merged["Insgesamt"] / df_merged["Bevölkerung 6 bis 20"] * 10000).round(0).astype(int)
+df_merged["35a Hilfen pro 10000"] = (df_merged["Anzahl 35a Hilfen"] / df_merged["Bevölkerung 6 bis 21"] * 10000).round(2)
+df_merged["erz. Hilfen pro 10000"] = (df_merged["Insgesamt"] / df_merged["Bevölkerung 6 bis 21"] * 10000).round(2)
 df_merged["SGB II-Quote"] = (df_merged["SGB II-Bezug"] / df_merged["Gesamtbevölkerung"]*100).round(2)
-df_merged["Anteil gesamt"] = df_merged["Anteil gesamt"].round(2)
+df_merged["Anteil 6 bis 21jähriger"] = df_merged["Anteil 6 bis 21jähriger"].round(2)
 df_merged["Abiturquote"] = df_merged["Abiturquote"].round(2)
 df_merged["Migrationsanteil"] = (df_merged["Anzahl Migrant*innen"]/ df_merged["Gesamtbevölkerung"]*100).round(2)
 
@@ -36,9 +36,7 @@ mean = subset.apply(pd.to_numeric, errors="coerce").mean()
 df_merged.loc[df_merged["Name"] == "Essen", "35a Hilfen pro 10000"] = round(mean, 0)
 
 # Spaltennamen anpassen
-df_merged=df_merged.rename(columns={"Anteil gesamt": "Kinderanteil",
-                     "Insgesamt": "erz. Hilfen absolut",
-                     "Anzahl 35a Hilfen": "35a Hilfen absolut"})
+df_merged=df_merged.rename(columns={"Anteil 6 bis 21jähriger": "Kinderanteil"})
 df_merged = df_merged[["Name",
                         "Kreisstrukturtyp",
                         "Gebietskörperschaft",
@@ -72,10 +70,7 @@ df_merged.to_csv("data/processed/master_2024.csv", index=False)
 
 
 
-# 1) Kreis-Daten zusammenführen (Hilfen + Bevölkerung) und ROR dranhängen
-base = df_hilfen[["Name", "Anzahl 35a Hilfen"]].merge(df_bevoelkerung[["Name", "Bevölkerung 6 bis 20"]], on="Name", how="inner")
-
-# 2) Auf ROR-Ebene aggregieren: Quote korrekt neu berechnen aus Summen
+base = df_hilfen[["Name", "Anzahl 35a Hilfen"]].merge(df_bevoelkerung[["Name", "Bevölkerung 6 bis 21"]], on="Name", how="inner")
 base = base.merge(df_arztdichte[["Name", "ROR"]], on="Name", how="inner")
 
 # 3) Aggregation auf ROR: Quote korrekt neu berechnen
