@@ -3,8 +3,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+from scipy import stats
 from statsmodels.stats.diagnostic import het_breuschpagan, het_white
 import statsmodels.api as sm
+
+from utils.commons import result_path
 
 
 def scatter_with_ols_line(df: pd.DataFrame, x: str, y: str, group: str | None = None) -> None:
@@ -37,7 +40,6 @@ def hetero_diagnostics(model, var) -> None:
     fitted = model.fittedvalues
     resid = model.resid
 
-    """ 
     plt.figure()
     plt.scatter(fitted, resid, alpha=0.85)
     plt.axhline(0)
@@ -46,7 +48,7 @@ def hetero_diagnostics(model, var) -> None:
     plt.title("Residuals vs Fitted")
     plt.tight_layout()
     plt.show()
-    """
+
     # model.model ist das ursprüngliche OLS Modellobjekt, exog die Matrix der unabh. Variable (im Gegensatz zu endog)
     exog = model.model.exog
 
@@ -106,3 +108,49 @@ def robust_cov(model):
     print(f"R² = {robust.rsquared:.3f}")
     print(f"p = {robust.pvalues[x]:.4f}")
 """
+
+
+def t_test(df, cat, var, folder: str):
+    d = df[[cat, var]].copy()
+
+    cats = d[cat].unique()
+
+    cat_y = d.loc[d[cat] == cats[0], var].to_numpy()
+    cat_x = d.loc[d[cat] == cats[1], var].to_numpy()
+
+    # students-t-Test (für annähernd normalverteilte Variablen)
+    t_stat, p_val = stats.ttest_ind(cat_x, cat_y)
+
+    mean_diff = np.mean(cat_x) - np.mean(cat_y)
+    s1 = np.var(cat_x, ddof=1)
+    s2 = np.var(cat_y, ddof=1)
+    n1, n2 = cat_x.size, cat_y.size
+
+    sp = np.sqrt(((n1 - 1) * s1 + (n2 - 1) * s2) / (n1 + n2 - 2))
+    cohen_d = mean_diff / sp
+
+    #  Mann-Whitney-U (nicht-parametrisch)
+    u_stat, p_u = stats.mannwhitneyu(cat_x, cat_y, alternative="two-sided")
+
+    t_test_result = {
+        "t-Test": t_stat,
+        "p_val": p_val,
+        "Effektstärke": cohen_d,
+        "Mann-Whitney-U-Test": u_stat,
+        "p_u": p_u,
+    }
+
+
+
+    results = pd.Series(t_test_result,name=var).round(3)
+
+    results.index.name="Variable"
+    results.to_csv(result_path(folder)/f"{var}_T-Tests.csv")
+
+    if (p_u and p_val < 0.05) and cohen_d > 0.5:
+        print(f"{var} vs {cat}: Effekt möglich. Nullhypothese wird verworfen")
+    else:
+        print(f"{var} vs {cat}: kein signifikanter Effekt. Nullhypothese wird nicht verworfen")
+
+
+
