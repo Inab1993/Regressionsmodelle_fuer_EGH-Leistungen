@@ -68,17 +68,20 @@ df = df[["Name", 'mit Abitur/Fachabitur', "Bildungsindex_equal","Bildungsindex_d
 
 # Kolmogorov-Smirnov-Test zur Messung des maximalen Abstands beider Verteilungen und Kernel-Density-Plots zu visuellen Bewertung
 # KS Test, da ich zwei Stichproben habe und deren Verteilung vergleichen will, mu und sigma sind nicht geschätzt
-sns.kdeplot(df["Bildungsindex_equal"], label="Bildungsindex gleich", fill=True)
-sns.kdeplot(df["mit Abitur/Fachabitur"], label="mit Abitur/Fachabitur", fill=True)
-sns.kdeplot(df["Bildungsindex_diff"], label="Bildungsindex ungleich", fill=True)
 
-plt.legend()
-plt.show()
+
+
 
 z = StandardScaler()
 x1 = z.fit_transform(df[["Bildungsindex_equal"]]).ravel()
 x2 = z.fit_transform(df[["mit Abitur/Fachabitur"]]).ravel()
 x3 = z.fit_transform(df[["Bildungsindex_diff"]]).ravel()
+
+sns.kdeplot(x1, label="Bildungsindex gleich", fill=True)
+sns.kdeplot(x2, label="mit Abitur/Fachabitur", fill=True)
+sns.kdeplot(x3, label="Bildungsindex ungleich", fill=True)
+plt.legend()
+plt.show()
 
 print("gleich vs abi: ",ks_2samp(x1, x2))
 print("gleich vs ungleich: ",ks_2samp(x1, x3))
