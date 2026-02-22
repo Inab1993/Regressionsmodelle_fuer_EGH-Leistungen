@@ -22,7 +22,8 @@ names = (
     .apply(re.escape)  
 )
 
-pattern = r"\b(" + "|".join(names) + r")\b"
+pattern = r"\b(?:" + "|".join(names) + r")\b"
+
 
 df = df.loc[
     df["Name"]
@@ -37,3 +38,7 @@ mapping = {'Hagen, Stadt der FernUniversität':'Hagen', 'Solingen, Klingenstadt'
 df["Name"] = df["Name"].replace(mapping)
 
 df.to_csv("data/processed/ror.csv", index=False)
+
+
+
+

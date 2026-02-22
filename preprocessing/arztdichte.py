@@ -42,7 +42,7 @@ names = (
     .apply(re.escape)  
 )
 
-pattern = r"\b(" + "|".join(names) + r")\b"
+pattern = r"\b(?:" + "|".join(names) + r")\b"
 
 df_ka = df_ka.loc[
     df["Name"]
