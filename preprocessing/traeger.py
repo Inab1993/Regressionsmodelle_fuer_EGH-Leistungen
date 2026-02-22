@@ -16,8 +16,6 @@ lwl["Überörtlicher Träger"] = "LWL"
 
 df = pd.concat([lvr, lwl], ignore_index=True)
 
-df["Name"] = df["Name"].str.strip()
-
 df = clean_and_sort(df, "Überörtlicher Träger")
 
 df.to_csv("data/processed/traeger.csv", index=False)

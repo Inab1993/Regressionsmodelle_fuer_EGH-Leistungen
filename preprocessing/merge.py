@@ -25,7 +25,7 @@ df_merged["erz. Hilfen pro 10000"] = (df_merged["Insgesamt"] / df_merged["Bevöl
 df_merged["SGB II-Quote"] = (df_merged["SGB II-Bezug"] / df_merged["Gesamtbevölkerung"]*100).round(2)
 df_merged["Anteil 6 bis 21jähriger"] = df_merged["Anteil 6 bis 21jähriger"].round(2)
 df_merged["Abiturquote"] = df_merged["Abiturquote"].round(2)
-df_merged["Migrationsanteil"] = (df_merged["Anzahl Migrant*innen"]/ df_merged["Gesamtbevölkerung"]*100).round(2)
+df_merged["Ausländeranteil"] = (df_merged["Anzahl Ausländer"]/ df_merged["Gesamtbevölkerung"]*100).round(2)
 
 # Essen imputieren
 RUHR = ["Bochum", "Dortmund", "Duisburg", "Mülheim an der Ruhr", "Oberhausen", "Gelsenkirchen"]
@@ -46,9 +46,10 @@ df_merged = df_merged[["Name",
                         "Kinderanteil",
                         "SGB II-Quote",
                         "Kinderarztdichte",
+                        "KJP-Dichte",
                         "Abiturquote",
                         "Bevölkerungsdichte",
-                        "Migrationsanteil"
+                        "Ausländeranteil"
                         ]]
 
 
@@ -56,16 +57,15 @@ typ_order = ["Kreisfreie Stadt", "Großer Kreis", "Städteregion", "Kleiner Krei
 df_merged["Kreisstrukturtyp"] = pd.Categorical(df_merged["Kreisstrukturtyp"], categories=typ_order, ordered=True)
 df_merged = df_merged.sort_values(by=["Kreisstrukturtyp", "Name"], ascending=[True, True])
 
-numerical_cols = ['erz. Hilfen pro 10000','35a Hilfen pro 10000', 'Kinderanteil','SGB II-Quote', 'Kinderarztdichte',  'Bevölkerungsdichte', 'Abiturquote', 'Migrationsanteil']
+numerical_cols = ['erz. Hilfen pro 10000','35a Hilfen pro 10000', 'Kinderanteil','SGB II-Quote', 'Kinderarztdichte',  'KJP-Dichte','Bevölkerungsdichte', 'Abiturquote', 'Ausländeranteil']
 
 validate_df(df_merged,
             not_null = numerical_cols,
             positive= numerical_cols,
             numeric= numerical_cols,
-            bounds={'Kinderanteil':(0,100),'SGB II-Quote':(0,100), 'Kinderarztdichte':(0,100), 'Abiturquote': (0,100), 'Migrationsanteil': (0,100)},
+            bounds={'Kinderanteil':(0,100),'SGB II-Quote':(0,100), 'Kinderarztdichte':(0,100), 'Abiturquote': (0,100), 'Ausländeranteil': (0,100)},
             key_cols=["Name"],
             df_name="Masterframe")
-
 df_merged.to_csv("data/processed/master_2024.csv", index=False)
 
 
@@ -73,17 +73,15 @@ df_merged.to_csv("data/processed/master_2024.csv", index=False)
 base = df_hilfen[["Name", "Anzahl 35a Hilfen"]].merge(df_bevoelkerung[["Name", "Bevölkerung 6 bis 21"]], on="Name", how="inner")
 base = base.merge(df_arztdichte[["Name", "ROR"]], on="Name", how="inner")
 
-# 3) Aggregation auf ROR: Quote korrekt neu berechnen
 df_ror = (
     base.groupby("ROR", as_index=False)
         .agg(
             hilfen_sum=("Anzahl 35a Hilfen", "sum"),
-            pop_sum=("Bevölkerung 6 bis 20", "sum")
+            pop_sum=("Bevölkerung 6 bis 21", "sum")
         )
 )
 df_ror["Hilfequote in ROR"] = (df_ror["hilfen_sum"] / df_ror["pop_sum"]) * 10000
 
-# 4) KJP-Dichte auf ROR-Ebene: pro ROR einen Wert ziehen und mergen
 kjp_ror = df_arztdichte[["ROR", "KJP-Dichte"]].drop_duplicates(subset=["ROR"])
 
 df_ror = df_ror.merge(kjp_ror, on="ROR", how="left")
