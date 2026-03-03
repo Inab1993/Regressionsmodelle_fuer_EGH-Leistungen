@@ -75,13 +75,54 @@ def hetero_diagnostics(model, var) -> None:
 
     print(df_out)
 
+def shapiro_wilk(df, var: str, group_col: str = None):
+    if var not in df.columns:
+        raise KeyError(f"Variable '{var}' nicht in DataFrame.")
+
+    if group_col is None:
+        x = df[var].dropna()
+
+        sh = stats.shapiro(x)
+        summary = {
+            "Shapiro-Statistik": float(sh.statistic),
+            "p-Value": float(sh.pvalue),
+        }
+
+        out = pd.Series(summary, name=var).round(3)
+        out.index.name = "Kennwert"
+        return out
+
+    if group_col not in df.columns:
+        raise KeyError(f"Gruppenvariable '{group_col}' nicht in DataFrame.")
+
+    results = []
+
+    for group, sub in df.groupby(group_col):
+        x = sub[var].dropna()
+
+        if len(x) < 3:
+            results.append({
+                "Gruppe": group,
+                "Shapiro-Statistik": None,
+                "p-Value": None,
+            })
+            continue
+
+        sh = stats.shapiro(x)
+
+        results.append({
+            "Gruppe": group,
+            "Shapiro-Statistik": float(sh.statistic),
+            "p-Value": float(sh.pvalue),
+        })
+
+    out = pd.DataFrame(results).set_index("Gruppe").round(3)
+    return out
 
 def run_regression(df_sub, x: str, y:str):
     d = df_sub[["Name",x, y]].copy()
     d = d[[x, y]].dropna()
     X = sm.add_constant(d[x])
-
-
     model = sm.OLS(d[y], X).fit()
 
     print("\n--- OLS-results ---")
@@ -110,7 +151,7 @@ def robust_cov(model):
 """
 
 
-def t_test(df, cat, var, folder: str):
+def t_test(df, cat, var):
     d = df[[cat, var]].copy()
 
     cats = d[cat].unique()
@@ -129,28 +170,17 @@ def t_test(df, cat, var, folder: str):
     sp = np.sqrt(((n1 - 1) * s1 + (n2 - 1) * s2) / (n1 + n2 - 2))
     cohen_d = mean_diff / sp
 
-    #  Mann-Whitney-U (nicht-parametrisch)
-    u_stat, p_u = stats.mannwhitneyu(cat_x, cat_y, alternative="two-sided")
-
     t_test_result = {
         "t-Test": t_stat,
         "p_val": p_val,
         "Effektstärke": cohen_d,
-        "Mann-Whitney-U-Test": u_stat,
-        "p_u": p_u,
     }
-
-
 
     results = pd.Series(t_test_result,name=var).round(3)
 
     results.index.name="Variable"
-    results.to_csv(result_path(folder)/f"{var}_T-Tests.csv")
+    return results
 
-    if (p_u and p_val < 0.05) and cohen_d > 0.5:
-        print(f"{var} vs {cat}: Effekt möglich. Nullhypothese wird verworfen")
-    else:
-        print(f"{var} vs {cat}: kein signifikanter Effekt. Nullhypothese wird nicht verworfen")
 
 
 
