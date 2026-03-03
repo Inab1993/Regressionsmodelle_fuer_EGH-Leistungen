@@ -6,7 +6,7 @@ import pandas as pd
 
 NAME = "Name"
 HILFEN_35A = "35a Hilfen pro 10000"
-MIGRATION = "Migrationsanteil"
+AUSLAENDER = "Ausländeranteil"
 ABITUR = "Abiturquote"
 SGBII = "SGB II-Quote"
 KINDERANTEIL = "Kinderanteil"

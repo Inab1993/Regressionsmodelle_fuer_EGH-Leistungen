@@ -9,7 +9,7 @@ df_arztdichte = pd.read_csv("data/processed/arztdichte_2024.csv", sep=",", encod
 df_traeger = pd.read_csv("data/processed/traeger.csv", sep=",", encoding="UTF-8")
 df_bildung = pd.read_csv("data/processed/abiturquote_2024.csv", sep=",", encoding="UTF-8")
 df_dichte = pd.read_csv("data/processed/bevoelkerungsdichte_2024.csv", sep=",", encoding="UTF-8")
-df_migration = pd.read_csv("data/processed/migration_2024.csv", sep=",", encoding="UTF-8")
+df_migration = pd.read_csv("data/processed/auslaender_2024.csv", sep=",", encoding="UTF-8")
 
 dfs_to_merge = [df_bevoelkerung,df_sgbii, df_arztdichte, df_traeger, df_bildung, df_dichte, df_migration]
 
@@ -24,7 +24,7 @@ df_merged["35a Hilfen pro 10000"] = (df_merged["Anzahl 35a Hilfen"] / df_merged[
 df_merged["erz. Hilfen pro 10000"] = (df_merged["Insgesamt"] / df_merged["Bevölkerung 6 bis 21"] * 10000).round(2)
 df_merged["SGB II-Quote"] = (df_merged["SGB II-Bezug"] / df_merged["Gesamtbevölkerung"]*100).round(2)
 df_merged["Anteil 6 bis 21jähriger"] = df_merged["Anteil 6 bis 21jähriger"].round(2)
-df_merged["Abiturquote"] = df_merged["Abiturquote"].round(2)
+df_merged["Abitursechs großer quote"] = df_merged["Abiturquote"].round(2)
 df_merged["Ausländeranteil"] = (df_merged["Anzahl Ausländer"]/ df_merged["Gesamtbevölkerung"]*100).round(2)
 
 # Essen imputieren

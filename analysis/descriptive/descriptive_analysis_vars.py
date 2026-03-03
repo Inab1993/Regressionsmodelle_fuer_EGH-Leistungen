@@ -9,7 +9,7 @@ from utils.commons import *
 df = pd.read_csv("data/processed/master_2024.csv", sep=",", encoding="UTF-8")
 
 variables = (
-    MIGRATION,
+    AUSLAENDER,
     ABITUR,
     SGBII,
     KINDERANTEIL,

@@ -8,20 +8,20 @@ Staatsangehörigkeiten (215) - kreisfreie Städte und Kreise - Stichtag. Landesd
 
 df = pd.read_csv("data/raw/2024/12521-03i.csv", sep=";", encoding="latin1", skiprows=6)
 
-df = df.rename(columns={"Unnamed: 2": "Name", "Insgesamt": "Anzahl Ausländer*innen"})
+df = df.rename(columns={"Unnamed: 2": "Name", "Insgesamt": "Anzahl Ausländer"})
 
 type_dict = {"Unnamed: 3": "int",
-             "Anzahl Migrant*innen": "int",
+             "Anzahl Ausländer": "int",
              }
 
 df = preprocess(df, type_dict)
 
 df = df[df["Unnamed: 3"].isin([1, 2, 3, 4, 5, 9])]
 df = (
-    df.groupby("Name", as_index=False)["Anzahl Ausländer*innen"]
+    df.groupby("Name", as_index=False)["Anzahl Ausländer"]
       .sum()
 )
 
-df = clean_and_sort(df, "Anzahl Ausländer*innen")
+df = clean_and_sort(df, "Anzahl Ausländer")
 
-df.to_csv("data/processed/migration_2024.csv", index=False)
+df.to_csv("data/processed/auslaender_2024.csv", index=False)
