@@ -1,6 +1,12 @@
 from __future__ import annotations
 
+import math
+from pathlib import Path
 from typing import Optional
+
+from matplotlib.figure import Figure
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+import statsmodels.api as sm
 
 from utils.commons import result_path, iqr_bounds
 
@@ -14,7 +20,7 @@ from pandas import DataFrame
 from scipy import stats
 
 
-def summarize(df: pd.DataFrame, var: str, folder: str=None, shapiro: bool = True, to_print=True) -> pd.Series:
+def summarize(df: pd.DataFrame, var: str) -> pd.Series:
     if var not in df.columns:
         raise KeyError(f"Variable '{var}' nicht in df.")
 
@@ -43,21 +49,8 @@ def summarize(df: pd.DataFrame, var: str, folder: str=None, shapiro: bool = True
         "Kurtosis": kurt,
     }
 
-    if shapiro and 3 <= n <= 100:
-        sh = stats.shapiro(x)
-        summary["Shapiro-Statistik"] = float(sh.statistic)
-        summary["mit p-value"] = float(sh.pvalue)
-
     out = pd.Series(summary, name=f"{var}").round(3)
-
     out.index.name = "Variable"
-
-    if folder is None:
-        folder = f"descriptives/{var}"
-
-    if to_print:
-        out.to_csv(result_path(folder) / f"summary.csv")
-
     return out
 
 
@@ -65,8 +58,6 @@ def grouped_summary(
     df: pd.DataFrame,
     var: str,
     group_col: str,
-    folder: str | None = None,
-    shapiro: bool = True,
 ) -> DataFrame:
 
     if var not in df.columns:
@@ -74,30 +65,21 @@ def grouped_summary(
     if group_col not in df.columns:
         raise KeyError(f"Gruppenspalte '{group_col}' nicht in df.")
 
-    # Deskriptives (+ optional Shapiro) pro Gruppe
     series_by_group = (
         df.groupby(group_col, dropna=False)[var]
-          .apply(lambda s: summarize(s.to_frame(name=var), var=var, shapiro=shapiro, to_print=False))
+          .apply(lambda s: summarize(s.to_frame(name=var), var=var))
     )
 
     out = series_by_group.unstack(level=group_col)
-    out.index.name = "Strukturvariable"
-
-    if folder is None:
-        folder = f"descriptives/{var}"
-
-    out.to_csv(result_path(folder) / f"summary_{group_col}.csv", index=True)
+    out.index.name = "Variable"
     return out
 
 
-# Outlier
 def find_outlier(
     df: pd.DataFrame,
     var: str,
-    folder: str=None,
     id_col: Optional[str] = "Name",
     iqr_k: float = 1.5,
-    to_print = True
 ) -> DataFrame:
 
     x = df[var]
@@ -112,7 +94,7 @@ def find_outlier(
     cols.append(var)
 
     out = df.loc[mask_lower | mask_upper, cols].copy()
-    if to_print and len(out) > 0:
+    if len(out) > 0:
         out["Outlier-Typ"] = np.where(
             mask_lower.loc[out.index],
             "unterer Outlier",
@@ -124,165 +106,188 @@ def find_outlier(
 
         out.sort_values(["Outlier-Typ", var]).reset_index(drop=True)
 
-        if folder is None:
-            folder = f"descriptives/{var}"
-
-        out.to_csv(
-            result_path(folder) / "outlier.csv",
-            index=False
-        )
     return out
 
 
-def qq_plot(df, var, folder: str=None):
-    plt.figure()
-    stats.probplot(df[var].to_numpy(), dist="norm", plot=plt)
-    plt.title("Q–Q-Plot der 35a-Daten")
-
-    if folder is None:
-        folder = f"descriptives/{var}"
-
-    plt.savefig(
-        result_path(folder) / f"q_q_plot.png",
-        dpi=300,
-        bbox_inches="tight"
-    )
-    plt.close()
-
-
-
-# Dist-Plot mit KDE
-def plot_distribution(
+def plot(
     df: pd.DataFrame,
     var: str,
-    folder: str=None,
+    type: str,
+    group_col: str | None = None,
+    title: str | None = None,
     bins: int = 20,
     bw_method: float = 0.5,
-) -> None:
+) -> Figure | None:
 
-    x = df[var]
-    xx = np.linspace(x.min(), x.max(), 200)
+    def _dist_kde(ax, dataframe: pd.DataFrame, variable: str) -> None:
+        x = dataframe[variable].dropna()
+        if x.size < 3:
+            return
 
-    plt.figure()
-    plt.hist(x, bins=bins, density=True)
-    plt.title(f"Verteilung: {var}")
-    plt.xlabel(var)
-    plt.ylabel("Häufigkeit")
+        vals = x.to_numpy()
 
-    kde = stats.gaussian_kde(x.to_numpy(), bw_method=bw_method)
-    plt.plot(xx, kde(xx), color="red")
+        ax.hist(vals, bins=bins, density=True)
+        ax.set_xlabel(variable)
+        ax.set_ylabel("Dichte")
 
-    if folder is None:
-        folder = f"descriptives/{var}"
+        # KDE nur wenn Spannweite > 0 (sonst Fehler/Quatsch)
+        if vals.min() == vals.max():
+            return
 
-    plt.savefig(
-        result_path(folder) / f"dist.png",
-        dpi=300,
-        bbox_inches="tight"
-    )
-    plt.close()
+        xx = np.linspace(vals.min(), vals.max(), 200)
+        kde = stats.gaussian_kde(vals, bw_method=bw_method)
+        ax.plot(xx, kde(xx))
+
+    if var not in df.columns:
+        raise KeyError(f"Spalte '{var}' nicht in df.")
+    if group_col is not None and group_col not in df.columns:
+        raise KeyError(f"Spalte '{group_col}' nicht in df.")
+
+    base_title = title if title is not None else f"{type}-Plot der {var}-Daten"
+
+    if group_col is None:
+        fig, ax = plt.subplots()
+
+        if type == "qq":
+            vals = df[var].dropna().to_numpy()
+            if vals.size < 3:
+                plt.close(fig)
+                return None
+            stats.probplot(vals, dist="norm", plot=ax)
+
+        elif type == "dist_kde":
+            _dist_kde(ax, df, var)
+
+        else:
+            plt.close(fig)
+            raise ValueError(f"Unbekannter type: {type}")
+
+        ax.set_title(base_title)
+        fig.tight_layout()
+        return fig
+
+    # --- mit Gruppierung ---
+    groups = list(df.groupby(group_col, dropna=False))
+    n_groups = len(groups)
+    if n_groups == 0:
+        return None
+
+    ncols = math.ceil(math.sqrt(n_groups))
+    nrows = math.ceil(n_groups / ncols)
+
+    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(5 * ncols, 4 * nrows))
+    axes = np.array(axes).reshape(-1)
+
+    valid_plot = False
+
+    for ax, (g_value, g_df) in zip(axes, groups):
+        vals = g_df[var].dropna().to_numpy()
+        if vals.size < 3:
+            ax.set_visible(False)
+            continue
+
+        if type == "qq":
+            stats.probplot(vals, dist="norm", plot=ax)
+
+        elif type == "dist_kde":
+            _dist_kde(ax, g_df, var)  # <-- wichtig: g_df, nicht df
+
+        else:
+            ax.set_visible(False)
+            continue
+
+        ax.set_title(f"{group_col}: {g_value}")
+        valid_plot = True
+
+    for ax in axes[len(groups):]:
+        ax.set_visible(False)
+
+    if not valid_plot:
+        plt.close(fig)
+        return None
+
+    fig.suptitle(base_title)
+    fig.tight_layout()
+    return fig
+
+
 
 # Boxplot nach Gruppen
 def boxplot_by_group(
     df: pd.DataFrame,
     var: str,
     group_col: str,
-    folder: str=None,
-) -> None:
+    title: str=None,
+    showfliers: bool=False
+) -> Figure | None:
+    plot_df = df[[group_col, var]].dropna()
+    if plot_df.empty:
+        return None
+    labels = plot_df[group_col].unique()
 
-    d = df[[group_col, var]].copy()
+    fig, ax = plt.subplots(figsize=(max(6, 0.6 * len(labels)), 6))
 
-    groups = []
-    labels = []
-    for key, g in d.groupby(group_col, dropna=False):
-        x = g[var].dropna()
-        if len(x) == 0:
-            continue
-        groups.append(x.values)
-        labels.append(str(key))
+    plot_title = title if title is not None else f"boxplot_{var}_nach_{group_col}"
+    ax.set_title(plot_title)
 
-
-    plt.figure(figsize=(max(6, 0.6 * len(labels)), 6))
-    plt.title(f"{var} nach {group_col}")
     sns.boxplot(
-        data=df,
+        data=plot_df,
         x=group_col,
         y=var,
-        showfliers=False
+        showfliers=showfliers,
+        ax=ax
     )
+
     sns.stripplot(
-        data=df,
+        data=plot_df,
         x=group_col,
         y=var,
         color="black",
         alpha=0.5,
-        jitter=True
+        jitter=True,
+        ax=ax
     )
-    plt.ylabel(var)
-    plt.xlabel(group_col)
-    plt.xticks(rotation=45, ha="right")
-    plt.tight_layout()
 
-    if folder is None:
-        folder = f"descriptives/{var}"
+    ax.set_ylabel(var)
+    ax.set_xlabel(group_col)
+    ax.tick_params(axis="x", rotation=45)
 
-
-    plt.savefig(
-        result_path(folder) / f"boxplot_by_{group_col}.png",
-        dpi=300,
-        bbox_inches="tight"
-    )
-    plt.close()
+    fig.tight_layout()
+    return fig
 
 # Scatterplot
 def plot_scatter(
     df: pd.DataFrame,
     x: str,
     y: str="35a Hilfen pro 10000",
-    folder: str = None,
     hue: Optional[str] = None,
-) -> None:
+) -> Figure | None:
     if x == y:
         return None
     d = df.copy()
 
+
+    fig, ax = plt.subplots()
     plt.figure()
     if hue is None:
-        plt.scatter(d[x], d[y])
+        ax.scatter(d[x], d[y])
     else:
         for key, g in d.groupby(hue, dropna=False):
-            plt.scatter(g[x], g[y], label=str(key))
-        plt.legend(title=hue)
+            ax.scatter(g[x], g[y], label=str(key))
+        ax.legend(title=hue)
 
-    plt.title(f"Scatterplot von {x} und {y}")
-    plt.xlabel(x)
-    plt.ylabel(y)
-    plt.tight_layout()
+    ax.set_title(f"Scatterplot von {x} und {y}")
+    ax.set_xlabel(x)
+    ax.set_ylabel(y)
+    fig.tight_layout()
 
-    if folder is None:
-        folder = f"descriptives/{x}"
-
-    path = result_path(folder)
-    if hue is not None:
-        plt.savefig(
-            path / f"{y}_scatter_by_{hue}.png",
-            dpi=300,
-            bbox_inches="tight"
-        )
-    else:
-        plt.savefig(
-            path / f"{y}_scatter.png",
-            dpi=300,
-            bbox_inches="tight"
-        )
-    plt.close()
+    return fig
 
 
 # Choroplethenkarte
 def show_map(df,
              var,
-             group_col: str=None,
-             folder: str=None):
+             group_col: str=None):
     nrw = gpd.read_file("data/NRW-map/dvg1krs_nw.shp")
 
     mapping = {
@@ -327,33 +332,14 @@ def show_map(df,
         x, y = row['geometry'].centroid.x, row['geometry'].centroid.y
         ax.text(x, y, row['GN'], fontsize=8, ha='center', va='center')
 
-    if folder is None:
-        folder = f"descriptives/{var}"
-
-    path = result_path(folder)
-
-    if group_col is None:
-        plt.savefig(
-            path / f"nrw_map.png",
-            dpi=300,
-            bbox_inches="tight"
-        )
-    else:
-        plt.savefig(
-            path / f"nrw_map_by_{group_col}.png",
-            dpi=300,
-            bbox_inches="tight"
-        )
-    plt.close()
+    return fig
 
 # Korrelation
 def corr_pair(
     df: pd.DataFrame,
     x: str,
     y: str="35a Hilfen pro 10000",
-    folder: str=None,
     method: str="spearman",
-    to_print=True
 ) -> pd.DataFrame | None:
 
     if x == y:
@@ -384,14 +370,8 @@ def corr_pair(
 
     }])
 
-    if folder is None:
-        folder = f"descriptives/{x}"
 
-    if to_print:
-        out.to_csv(result_path(folder) / f"{y}_{method}_correlation.csv")
-        return out
-    else:
-        return out
+    return out
 
 
 
@@ -400,44 +380,83 @@ def corr_pair_by_type(
     x: str,
     group: str,
     y: str="35a Hilfen pro 10000",
-    folder: str=None,
+    method: str="spearman",
 ) -> DataFrame | None:
 
     if x == y:
         return None
     out = (df
         .groupby(group)
-        .apply(lambda g: corr_pair(g, x, y, to_print=False), include_groups=False)
+        .apply(lambda g: corr_pair(g, x, y,method=method), include_groups=False)
         .reset_index(level=0)
     )
-
-    if folder is None:
-        folder = f"descriptives/{x}"
-
-    out.to_csv(result_path(folder) / f"{y}_correlation_by_{group}.csv")
     return out
 
 
-def basic_descriptive_analysis(df, var, y="35a Hilfen pro 10000", folder: str=None, shapiro=True) -> None:
+def vif(df, vars: tuple):
+    X = df[[*vars]]
+    X = sm.add_constant(X)
 
-    summarize(df, var, folder=folder, shapiro=shapiro),
-    plot_distribution(df, var, folder=folder)
+    vif_data = pd.DataFrame()
+    vif_data["Variable"] = X.columns
+    vif_data["VIF"] = [
+        variance_inflation_factor(X.values, i)
+        for i in range(X.shape[1])
+    ]
 
-    corr_pair(df, var, y, folder=folder)
-    plot_scatter(df, var, y, folder=folder)
+    vif_data = vif_data[vif_data["Variable"] != "const"]
+    vif_data = vif_data.sort_values("VIF", ascending=False)
+    return vif_data
 
-    show_map(df, var, folder=folder)
 
 
-def descriptive_analysis_by_group(df, var,  group_col, y="35a Hilfen pro 10000", folder: str=None, shapiro=True)-> None:
+def correlations(df: pd.DataFrame, vars: tuple, method="spearman"):
+    corr = df[[*vars]].corr(method=method)
 
-    grouped_summary(df, var, group_col, folder=folder, shapiro=shapiro)
+    # Nur obere Dreiecksmatrix (ohne Diagonale)
+    mask = np.triu(np.ones_like(corr, dtype=bool), k=1)
+    corr_pairs = corr.where(mask)
 
-    corr_pair_by_type(df, var, group_col, y, folder=folder)
+    corr_pairs = (
+        corr_pairs
+        .stack()
+        .reset_index()
+    )
+    corr_pairs.columns = ["Variable_1", "Variable_2", "r"]
 
-    boxplot_by_group(df, var, group_col, folder=folder)
+    filtered = corr_pairs[abs(corr_pairs["r"]) > 0.5]
 
-    plot_scatter(df, var, y, folder=folder, hue=group_col)
+    filtered.sort_values("r", ascending=False)
+    return filtered
+
+
+def describe_and_save(df, var, y="35a Hilfen pro 10000", folder: str=None) -> None:
+    folder = folder if folder else f"descriptives/{var}"
+    summarize(df, var).to_csv(result_path(folder) / f"summary.csv")
+    fig = plot(df, var, type="dist_kde")
+    fig.savefig(result_path(folder) / f"dist_{var}.png", dpi=300, bbox_inches="tight")
+    plt.close(fig)
+    if var != y:
+        corr_pair(df, var, y).to_csv(result_path(folder) / f"corr_pair_{y}_to_{var}.csv", index=False)
+    fig = show_map(df, var)
+    fig.savefig(result_path(folder) / f"map_{var}.png", dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
+
+def describe_and_save_grouped(df, var,  group_col, y="35a Hilfen pro 10000", folder: str=None)-> None:
+    folder = folder if folder else f"descriptives/{var}"
+    grouped_summary(df, var, group_col).to_csv(result_path(folder) / f"summary_{group_col}.csv")
+    if var != y:
+        corr_pair_by_type(df, var, group_col, y).to_csv(result_path(folder) / f"corr_{var}_to_{y}_by_{group_col}_spearman.csv")
+        fig = plot_scatter(df, var, y, hue=group_col)
+        fig.savefig(result_path(folder) / f"scatter_{var}_to_{y}_by_{group_col}.png", dpi=300, bbox_inches="tight")
+        plt.close(fig)
+
+    fig=boxplot_by_group(df, var, group_col)
+    fig.savefig(result_path(folder) / f"boxplot_{var}_by_{group_col}.png", dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
+
 
 
 
