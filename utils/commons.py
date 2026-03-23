@@ -17,6 +17,7 @@ GEBIETSKOERPERSCHAFT = "Gebietskörperschaft"
 ERZ_HILFEN = "erz. Hilfen pro 10000"
 BEV_DICHTE = "Bevölkerungsdichte"
 KJP = "KJP-Dichte"
+BILDUNG = "Bildungsindex"
 
 
 BASE_RESULT_PATH = Path("results")
