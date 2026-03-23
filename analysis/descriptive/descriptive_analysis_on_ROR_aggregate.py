@@ -1,5 +1,8 @@
 import pandas as pd
-from utils.descriptive_utils import summarize, plot_distribution, plot_scatter, corr_pair
+from matplotlib import pyplot as plt
+
+from utils.commons import result_path
+from utils.descriptive_utils import describe_and_save, plot_scatter
 
 # Einlesen
 df = pd.read_csv("data/processed/aggregate_on_ROR_master.csv", sep=",", encoding="UTF-8")
@@ -7,14 +10,11 @@ df = pd.read_csv("data/processed/aggregate_on_ROR_master.csv", sep=",", encoding
 kjp = "KJP-Dichte"
 hilfen_ror = "Hilfequote in ROR"
 
-summarize(df, hilfen_ror)
-plot_distribution(df, hilfen_ror)
-
-summarize(df, kjp)
-plot_distribution(df, kjp)
-
-corr_pair(df, kjp, hilfen_ror)
-plot_scatter(df, kjp, hilfen_ror)
+describe_and_save(df, hilfen_ror, y=hilfen_ror, folder=f"descriptive/ror_aggregate/{hilfen_ror}")
+describe_and_save(df, kjp, y=hilfen_ror, folder=f"descriptive/ror_aggregate/{kjp}")
+fig = plot_scatter(df, hilfen_ror, kjp)
+fig.savefig(result_path(f"descriptive/ror_aggregate/{kjp}") / "scatter.png", dpi=300, bbox_inches="tight")
+plt.close(fig)
 
 
 

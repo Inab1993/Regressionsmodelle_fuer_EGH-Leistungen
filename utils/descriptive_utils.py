@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import math
-from pathlib import Path
 from typing import Optional
 
 from matplotlib.figure import Figure
+from scipy.stats import chi2_contingency
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 import statsmodels.api as sm
 
@@ -101,8 +101,8 @@ def find_outlier(
             "oberer Outlier",
         )
 
-        out["untere Grenze"] = lower
-        out["obere Grenze"] = upper
+        out["untere Grenze"] = round(lower, 2)
+        out["obere Grenze"] = round(upper, 2)
 
         out.sort_values(["Outlier-Typ", var]).reset_index(drop=True)
 
@@ -190,7 +190,7 @@ def plot(
             stats.probplot(vals, dist="norm", plot=ax)
 
         elif type == "dist_kde":
-            _dist_kde(ax, g_df, var)  # <-- wichtig: g_df, nicht df
+            _dist_kde(ax, g_df, var)
 
         else:
             ax.set_visible(False)
@@ -302,7 +302,7 @@ def show_map(df,
     nrw = nrw.merge(df, left_on="GN", right_on="Name", how="left")
 
     fig, ax = plt.subplots(1, 1, figsize=(18, 21))
-    nrw.plot(column=var, ax=ax, legend=True, cmap="OrRd", edgecolor="black")
+    nrw.plot(column=var, ax=ax, legend=True, cmap="OrRd", edgecolor="black",  legend_kwds={"shrink": 0.5})
 
     if group_col is not None:
         groups = nrw[group_col].unique().tolist()
@@ -429,22 +429,47 @@ def correlations(df: pd.DataFrame, vars: tuple, method="spearman"):
     filtered.sort_values("r", ascending=False)
     return filtered
 
+def chi2_test_report(df, var1, var2):
+    table = pd.crosstab(df[var1], df[var2])
+    chi2, p, dof, expected = chi2_contingency(table)
+    n = table.to_numpy().sum()
+    r, k = table.shape
+    cramers_v = np.sqrt(chi2 / (n * min(r - 1, k - 1)))
 
-def describe_and_save(df, var, y="35a Hilfen pro 10000", folder: str=None) -> None:
-    folder = folder if folder else f"descriptives/{var}"
+    expected_df = pd.DataFrame(
+        expected,
+        index=table.index,
+        columns=table.columns
+    )
+
+    report = (
+        f"Chi-Quadrat-Statistik: {chi2:.4f}\n"
+        f"p-Wert: {p:.4f}\n"
+        f"Freiheitsgrade: {dof}\n"
+        f"Stichprobengröße n: {n}\n"
+        f"Cramérs V: {cramers_v:.4f}\n"
+        f"Minimale erwartete Häufigkeit: {expected.min():.4f}\n\n"
+        f"Erwartete Häufigkeiten:\n{expected_df.to_string()}\n"
+    )
+    return report
+
+
+def describe_and_save(df, var, y="35a Hilfen pro 10000", folder: str=None, map: str = None) -> None:
+    folder = folder if folder else f"descriptive/{var}"
     summarize(df, var).to_csv(result_path(folder) / f"summary.csv")
     fig = plot(df, var, type="dist_kde")
     fig.savefig(result_path(folder) / f"dist_{var}.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
     if var != y:
         corr_pair(df, var, y).to_csv(result_path(folder) / f"corr_pair_{y}_to_{var}.csv", index=False)
-    fig = show_map(df, var)
-    fig.savefig(result_path(folder) / f"map_{var}.png", dpi=300, bbox_inches="tight")
-    plt.close(fig)
+    if map == "NRW":
+        fig = show_map(df, var)
+        fig.savefig(result_path(folder) / f"map_{var}.png", dpi=300, bbox_inches="tight")
+        plt.close(fig)
 
 
 def describe_and_save_grouped(df, var,  group_col, y="35a Hilfen pro 10000", folder: str=None)-> None:
-    folder = folder if folder else f"descriptives/{var}"
+    folder = folder if folder else f"descriptive/{var}"
     grouped_summary(df, var, group_col).to_csv(result_path(folder) / f"summary_{group_col}.csv")
     if var != y:
         corr_pair_by_type(df, var, group_col, y).to_csv(result_path(folder) / f"corr_{var}_to_{y}_by_{group_col}_spearman.csv")

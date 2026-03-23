@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -36,18 +34,9 @@ def scatter_with_ols_line(df: pd.DataFrame, x: str, y: str, group: str | None = 
     plt.show()
 
 
-def hetero_diagnostics(model, var) -> None:
+def hetero_diagnostics(model) -> None:
     fitted = model.fittedvalues
     resid = model.resid
-
-    plt.figure()
-    plt.scatter(fitted, resid, alpha=0.85)
-    plt.axhline(0)
-    plt.xlabel("Fitted values")
-    plt.ylabel("Residuals")
-    plt.title("Residuals vs Fitted")
-    plt.tight_layout()
-    plt.show()
 
     # model.model ist das ursprüngliche OLS Modellobjekt, exog die Matrix der unabh. Variable (im Gegensatz zu endog)
     exog = model.model.exog
@@ -67,13 +56,8 @@ def hetero_diagnostics(model, var) -> None:
         # F = Fisher-Verteilung, besser bei kleineren n
         # White Test ist weniger sensitiv, wenn Normalverteilungsannahmen verletzt werden
 
-    path = Path(f"../../tables/inferential")
-    path.mkdir(parents=True, exist_ok=True)
-
     df_out = df_out.round(5)
-    df_out.to_csv(path / f"{var}_het_tests.csv", index=False)
-
-    print(df_out)
+    return df_out
 
 def shapiro_wilk(df, var: str, group_col: str = None):
     if var not in df.columns:
@@ -151,7 +135,8 @@ def robust_cov(model):
 """
 
 
-def t_test(df, cat, var):
+
+def t_test(df, cat, var, equal_var: bool = False):
     d = df[[cat, var]].copy()
 
     cats = d[cat].unique()
@@ -160,7 +145,7 @@ def t_test(df, cat, var):
     cat_x = d.loc[d[cat] == cats[1], var].to_numpy()
 
     # students-t-Test (für annähernd normalverteilte Variablen)
-    t_stat, p_val = stats.ttest_ind(cat_x, cat_y)
+    t_stat, p_val = stats.ttest_ind(cat_x, cat_y, equal_var=equal_var)
 
     mean_diff = np.mean(cat_x) - np.mean(cat_y)
     s1 = np.var(cat_x, ddof=1)
@@ -176,11 +161,40 @@ def t_test(df, cat, var):
         "Effektstärke": cohen_d,
     }
 
-    results = pd.Series(t_test_result,name=var).round(3)
+    results = pd.Series(t_test_result,name=var)
 
     results.index.name="Variable"
     return results
 
 
+def mann_whitney_u(df, cat, var):
+    d = df[[cat, var]].copy()
 
+    cats = d[cat].unique()
 
+    cat_y = d.loc[d[cat] == cats[0], var].to_numpy()
+    cat_x = d.loc[d[cat] == cats[1], var].to_numpy()
+
+    u_stat, p_val = stats.mannwhitneyu(cat_y, cat_x, alternative="two-sided")
+
+    n1 = len(cat_y)
+    n2 = len(cat_x)
+    N = n1 + n2
+
+    mean_u = n1 * n2 / 2
+    std_u = np.sqrt(n1 * n2 * (n1 + n2 + 1) / 12)
+
+    z = (u_stat - mean_u) / std_u
+
+    r = abs(z) / np.sqrt(N)
+
+    test_result = {
+        "U-Statistik": u_stat,
+        "p_val": p_val,
+        "Effektstärke_r": r,
+    }
+
+    results = pd.Series(test_result, name=var).round(3)
+    results.index.name = "Variable"
+
+    return results

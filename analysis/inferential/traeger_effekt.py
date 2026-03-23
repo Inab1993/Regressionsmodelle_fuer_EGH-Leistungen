@@ -3,9 +3,10 @@ import sys
 from matplotlib import pyplot as plt
 from scipy import stats
 import statsmodels.formula.api as smf
+import statsmodels.api as sm
+import seaborn as sns
 
-from utils.descriptive_utils import find_outlier, boxplot_by_group, plot
-from utils.inferential_utils import t_test, shapiro_wilk
+from utils.inferential_utils import t_test, shapiro_wilk, mann_whitney_u, hetero_diagnostics
 from utils.preprocessing_utils import DataView, winsorize_iqr
 from utils.commons import *
 
@@ -16,73 +17,116 @@ variables = (
     KINDERANTEIL,
     KINDERARZTDICHTE,
     ERZ_HILFEN,
+    HILFEN_35A,
 )
 
 df = pd.read_csv("data/processed/master_2024.csv", sep=",", encoding="UTF-8")
 
 vars_to_clean = []
 
-for var in variables:
-    out = find_outlier(df, var, to_print=False)
-    if len(out) >0:
-        vars_to_clean.append(var)
-
 view = DataView(df)
 
-for v in vars_to_clean:
-    view.add_clean_column(v, cleaner_func=winsorize_iqr)
+view.add_clean_column(KINDERARZTDICHTE, cleaner_func=winsorize_iqr)
+view.add_clean_column(ERZ_HILFEN, cleaner_func=winsorize_iqr)
 
-# Modell ohne Winsorisierung
-df = view.use(cleaned=False, cols=vars_to_clean)
+# Modell mit Winsorisierung
+df = view.use(cleaned=True, cols=[KINDERARZTDICHTE, ERZ_HILFEN])
 
 df_lwl = df[df[TRAEGER] == "LWL"].copy()
 df_lvr = df[df[TRAEGER] == "LVR"].copy()
 
-groups = [df_lwl[HILFEN_35A],df_lvr[HILFEN_35A]]
-
-fig=plot(df, HILFEN_35A, type="qq", group_col=TRAEGER)
-fig.savefig(result_path("inferential/traegereffekt")/f"qqplots_{HILFEN_35A}.png", dpi=300, bbox_inches="tight")
-plt.close(fig)
-sh = shapiro_wilk(df, HILFEN_35A, group_col=TRAEGER)
-
-# Überprüfung von Varianzhomogenität
-center="mean"
-lev_stat, lev_p = stats.levene(*groups, center="mean")
-
-with open("results/inferential/traeger_effekt/levene_shapiro.txt", "w", encoding="utf-8") as f:
-    sys.stdout = f
-    print(sh)
-    print("___________")
-    print(f"Levene-Statistik mit center={center}: ", round(lev_stat, 3))
-    print("Levene p-Wert: ", round(lev_p, 4))
-
-# erster Test
-# Nullhypothese (H₀): Die mittlere Inanspruchnahme von §35a-Hilfen pro 10.000 ist bei LWL und LVR gleich.
-t_test=t_test(df, TRAEGER, HILFEN_35A)
-
-concat_list=[]
 
 for var in variables:
-    concat_list.append(t_test(df, TRAEGER, var))
-    fig = boxplot_by_group(df, var, TRAEGER)
-    fig.savefig(result_path("inferential/traegereffekt")/f"boxplot_by_{var}.png", dpi=300, bbox_inches="tight")
-    plt.close(fig)
+    groups = [df_lwl[var], df_lvr[var]]
+    sh = shapiro_wilk(df, var, group_col=TRAEGER)
+    with open(result_path(f"inferential/traeger_effekt/{var}")/"shapiro.txt", "w", encoding="utf-8") as f:
+        sys.stdout = f
+        print(sh)
+
+# Nullhypothese (H₀): Die mittlere Inanspruchnahme ist bei LWL und LVR gleich.
+ttest_list=[]
+
+for var in [HILFEN_35A, KINDERARZTDICHTE,  ERZ_HILFEN, KINDERANTEIL]:
+    res = t_test(df, TRAEGER, var, equal_var=False)
+    ttest_list.append(res)
+
+ttests = pd.concat(ttest_list, axis=1)
+ttests.to_csv(result_path("inferential/traeger_effekt")/"welchttest_results.csv", index=False)
 
 
-ttests = pd.concat(concat_list, axis=1)
-ttests.to_csv(result_path("inferential/traegereffekt")/"ttest_results.csv", index=False)
+
+mwu_list=[]
+for var in [AUSLAENDER, ABITUR, SGBII]:
+    res = mann_whitney_u(df, TRAEGER, var)
+    mwu_list.append(res)
+mwutests = pd.concat(mwu_list, axis=1)
+mwutests.to_csv(result_path("inferential/traeger_effekt")/"mwu_test_results.csv", index=False)
 
 df = df[df["Name"] != "Aachen"]
 
 df[GEBIETSKOERPERSCHAFT] = df[GEBIETSKOERPERSCHAFT].astype("category")
 df[TRAEGER] = df[TRAEGER].astype("category")
 
-m1 = smf.ols(f'Q("{AUSLAENDER}") ~ C(Q("{TRAEGER}"))', data=df).fit(cov_type="HC3")
+for var in [HILFEN_35A, AUSLAENDER, KINDERARZTDICHTE]:
+    plt.figure()
+    fig = sns.regplot(x=var, y=HILFEN_35A, data=df)
+    plt.savefig(result_path(f"inferential/traeger_effekt/{var}") / "reg_plot.png", dpi=300,
+                bbox_inches="tight")
+    plt.close()
 
-print(m1.summary())
+    m1 = smf.ols(f'Q("{var}") ~ C(Q("{TRAEGER}"))', data=df).fit()
+    sh_stat, sh_p = stats.shapiro(m1.resid)
 
-m2 = smf.ols(f'Q("{AUSLAENDER}") ~ C(Q("{TRAEGER}")) + C({GEBIETSKOERPERSCHAFT})', data=df).fit(cov_type="HC3")
+    fig = sm.qqplot(m1.resid, line="45", fit=True)
+    fig.savefig(result_path(f"inferential/traeger_effekt/{var}") / "qq_plot_resids.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
-print(m2.summary())
+    with open(result_path(f"inferential/traeger_effekt/{var}")/"shapiro_het_tests_resids.txt", "w", encoding="utf-8") as f:
+            sys.stdout = f
+            print(sh_stat)
+            print(sh_p)
+            print(hetero_diagnostics(m1))
+
+
+    with open(result_path(f"inferential/traeger_effekt/{var}")/"OLS_model1.txt", "w", encoding="utf-8") as f:
+        sys.stdout = f
+        print(m1.summary())
+
+    m2 = smf.ols(f'Q("{var}") ~ C(Q("{TRAEGER}")) + C({GEBIETSKOERPERSCHAFT})', data=df).fit()
+
+    with open(result_path(f"inferential/traeger_effekt/{var}")/"OLS_model2.txt", "w", encoding="utf-8") as f:
+        sys.stdout = f
+        print(m2.summary())
+
+for var in [ABITUR]:
+    plt.figure()
+    fig = sns.regplot(x=var, y=HILFEN_35A, data=df)
+    plt.savefig(result_path(f"inferential/traeger_effekt/{var}") / "reg_plot.png", dpi=300,
+                bbox_inches="tight")
+    plt.close()
+    m1 = smf.ols(f'Q("{var}") ~ C(Q("{TRAEGER}"))', data=df).fit(cov_type="HC3")
+    sh_stat, sh_p = stats.shapiro(m1.resid)
+
+    fig = sm.qqplot(m1.resid, line="45", fit=True)
+    fig.savefig(result_path(f"inferential/traeger_effekt/{var}") / "qq_plot_resids.png", dpi=300, bbox_inches="tight")
+    plt.close()
+
+    with open(result_path(f"inferential/traeger_effekt/{var}")/"shapiro_het_tests_resids.txt", "w", encoding="utf-8") as f:
+            sys.stdout = f
+            print(sh_stat)
+            print(sh_p)
+            print(hetero_diagnostics(m1))
+
+
+    with open(result_path(f"inferential/traeger_effekt/{var}")/"OLS_model1.txt", "w", encoding="utf-8") as f:
+        sys.stdout = f
+        print(m1.summary())
+
+    m2 = smf.ols(f'Q("{var}") ~ C(Q("{TRAEGER}")) + C({GEBIETSKOERPERSCHAFT})', data=df).fit()
+
+    with open(result_path(f"inferential/traeger_effekt/{var}")/"OLS_model2.txt", "w", encoding="utf-8") as f:
+        sys.stdout = f
+        print(m2.summary())
+
 
 

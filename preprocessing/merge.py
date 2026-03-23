@@ -17,8 +17,6 @@ df_merged = df_hilfen.copy()
 for df_other in dfs_to_merge:
     df_merged = df_merged.merge(df_other, on="Name", how="left")
 
-print(len(df_merged))
-
 # relative Werte berechnen
 df_merged["35a Hilfen pro 10000"] = (df_merged["Anzahl 35a Hilfen"] / df_merged["Bevölkerung 6 bis 21"] * 10000).round(2)
 df_merged["erz. Hilfen pro 10000"] = (df_merged["Insgesamt"] / df_merged["Bevölkerung 6 bis 21"] * 10000).round(2)
@@ -49,7 +47,8 @@ df_merged = df_merged[["Name",
                         "KJP-Dichte",
                         "Abiturquote",
                         "Bevölkerungsdichte",
-                        "Ausländeranteil"
+                        "Ausländeranteil",
+                       "Bildungsindex"
                         ]]
 
 
